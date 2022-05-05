@@ -2,12 +2,25 @@ Package: quickHapR
 Type: Package
 Title: What the Package Does (Title Case)
 Version: 0.1.0
-Author: Who wrote it
-Maintainer: The package maintainer <yourself@somewhere.net>
-Description: More about what it does (maybe more than one line)
-    Use four spaces when indenting paragraphs within the Description.
-License: What license is it under?
+Author: ZhangRenl
+Maintainer: Zhangrenliang <zhang_renliang@163.com>
+Description: A quick hap analysis R packages, depends on vcf files and phenos.
 Encoding: UTF-8
 LazyData: true
 RoxygenNote: 7.1.2
-Imports: vcfR,tidyr,dplyr,ggplot2,reshape2,ggpubr
+Imports: 
+  vcfR,
+  tidyr,
+  dplyr,
+  ggplot2,
+  reshape2, 
+  ggpubr, 
+  stringr, 
+  randomcoloR,
+  rtracklayer, 
+  trackViewer,
+  magrittr,
+  GenomicRanges,
+  IRanges,
+  rlang
+License: GPL-3

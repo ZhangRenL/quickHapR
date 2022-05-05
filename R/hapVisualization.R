@@ -1,9 +1,17 @@
 #' @name plotHapTable
 #' @title plotHapTable
+#' @importFrom randomcoloR randomColor
+#' @importFrom stringr str_starts
+#' @importFrom stringr str_length
+#' @import tidyr
+#' @import ggplot2
+#' @param hapResult hapResult
+#' @param hapPrefix hapPrefix
+#' @param geneID geneID
 #' @export
 plotHapTable = function(hapResult, hapPrefix = "H", geneID = ""){
-  require(tidyr)
-  if("Accession" %in% colnames(hapResult))  hapResult = hapResult %>% subset(select = -Accession)
+  requireNamespace('tidyr')
+  if("Accession" %in% colnames(hapResult)) hapResult = hapResult[,colnames(hapResult) != 'Accession']
   ALLELE = hapResult[hapResult[,1] == "ALLELE",]
   hps = hapResult[stringr::str_starts(hapResult[,1],hapPrefix),]
   hps = rbind(ALLELE, hps)
@@ -28,9 +36,9 @@ plotHapTable = function(hapResult, hapPrefix = "H", geneID = ""){
   meltHapRes$Var1 = factor(meltHapRes$Var1, levels = levels)
   if(is.null(foot)) foot = " " else foot = paste(foot,collapse = ";")
   fig0 = ggplot2::ggplot(data = meltHapRes,
-                         mapping = ggplot2::aes(x = Var2, y = Var1, fill = value)) +
+                         mapping = ggplot2::aes_(x=~Var2, y=~Var1, fill=~value)) +
     ggplot2::geom_tile(color = "white") +
-    ggplot2::geom_text(ggplot2::aes(Var2, Var1,
+    ggplot2::geom_text(ggplot2::aes_(x=~Var2, y=~Var1,
                                     label = lab$value)) +
     ggplot2::scale_fill_discrete(na.value = "white") +
     ggplot2::labs(caption = foot) +
@@ -57,16 +65,35 @@ return(fig0)
 
 #' @name import_gff
 #' @title  import_gff
+#' @importFrom rtracklayer import
+#' @param gffFile gffFile
+#' @export
 import_gff = function(gffFile){
   gff = rtracklayer::import(gffFile)
   return(gff)
 }
 
+
+
+#' @name plotGeneStructure
+#' @title plotGeneStructure
+#' @importFrom trackViewer lolliplot
+#' @importFrom  GenomicRanges GRanges
+#' @importFrom  GenomicRanges strand
+#' @importFrom IRanges IRanges %over%
+#' @import tidyr
+#' @param gff gff
+#' @param hapResult hapResult
+#' @param Chr Chr
+#' @param startPOS startPOS
+#' @param endPOS endPOS
+#' @export
 plotGeneStructure = function(gff, hapResult,
                              Chr,
                              startPOS, endPOS){
 # lolliplot
-  require(trackViewer)
+  requireNamespace("trackViewer")
+  requireNamespace("tidyr")
   if(missing(gff)) {
     message("gfdf");
     stop("missing gff")}
@@ -75,16 +102,16 @@ plotGeneStructure = function(gff, hapResult,
     stop("missing hapResult")}
 
   geneElement = c("CDS","three_prime_UTR","five_prime_UTR")
-  if("Accession" %in% colnames(hapResult))  hapResult = hapResult %>% subset(select = -Accession)
+  if("Accession" %in% colnames(hapResult)) hapResult = hapResult[,colnames(hapResult) != 'Accession']
   meta = hapResult[1:4,-1]
   POS = as.numeric(meta[2,])
   SNP = meta[4,]
 
-  if(missingArg(Chr)) Chr = meta[1,1]
-  if(missingArg(startPOS)) startPOS = min(POS)
-  if(missingArg(endPOS)) endPOS = max(POS)
+  if(missing(Chr)) Chr = meta[1,1]
+  if(missing(startPOS)) startPOS = min(POS)
+  if(missing(endPOS)) endPOS = max(POS)
 
-  SNP.gr <- GRanges(Chr, IRanges(POS, width=1,
+  SNP.gr <- GenomicRanges::GRanges(Chr, IRanges::IRanges(POS, width=1,
                                  names = paste0(POS,"(",SNP,")")),
                     color = sample.int(6, length(SNP), replace=TRUE),
                     score = sample.int(5, length(SNP), replace = TRUE),
@@ -92,8 +119,8 @@ plotGeneStructure = function(gff, hapResult,
 
 
 
-  gene = GRanges(Chr,
-                 IRanges(start = min(startPOS,endPOS),
+  gene = GenomicRanges::GRanges(Chr,
+                 IRanges::IRanges(start = min(startPOS,endPOS),
                          end = max(startPOS,endPOS)))
   over = gff[gff %over% gene]
   over$height[over$type == "CDS"] = 0.05
@@ -101,7 +128,7 @@ plotGeneStructure = function(gff, hapResult,
   over$height[over$type == "five_prime_UTR"] = 0.015
 
   features = over[over$type %in% geneElement]
-  strands = as.character(strand(features))
+  strands = as.character(GenomicRanges::strand(features))
   layerID = unlist(features$Parent)
   layerID = stringr::str_remove_all(layerID,".v2.2")
   layerID = paste0(layerID,"(",ifelse(strands == "+", "5'->3'","3'<-5'"),")")
@@ -114,6 +141,6 @@ plotGeneStructure = function(gff, hapResult,
   features$fill = fillc[names(features)]
   # features = c(gene, features)
 
-  lolliplot(SNP.gr, features, type = "pin", jitter = NULL, ylab = "",cex = 0.5,yaxis = F)
+  trackViewer::lolliplot(SNP.gr, features, type = "pin", jitter = NULL, ylab = "",cex = 0.5,yaxis = F)
 }
 

@@ -3,17 +3,26 @@
 #' @description 第一列为Accession
 #' 第二列起为表型，
 #' 第一行为表头（表型名称）：“表型名称（计量单位）.地点[年份]”
+#' @importFrom utils read.delim
 #' @param phenoFile pheno file path, should be a table separated by tab
 #' @param ... parameters will pass to read.delim
 #' @export
 import_pheno = function(phenoFile, ...){
-  phenos = read.delim(phenoFile,
-                     check.names = F,
-                     row.names = 1,...)
+  phenos = utils::read.delim(phenoFile,
+                             check.names = F,
+                             row.names = 1,...)
   return(phenos)
 }
 
-
+#' @name hapVsPhenos
+#' @title hapVsPhenoS
+#' @param hap hap
+#' @param phenos phenos
+#' @param hapPrefix hap  prefix
+#' @param  geneID gene ID forplot title
+#' @param mergeFigs merge heatmapand box plot ornot
+#' @importFrom stats na.omit t.test
+#' @export
 hapVsPhenos = function(hap, phenos,hapPrefix = "H",geneID = "Seita.0G000000", mergeFigs = T){
   # 表型关联
   phenoNames = colnames(phenos)
@@ -28,6 +37,18 @@ hapVsPhenos = function(hap, phenos,hapPrefix = "H",geneID = "Seita.0G000000", me
   return(results)
 }
 
+
+#' @name hapVsPheno
+#' @title hapVsPheno
+#' @param hap hap
+#' @param pheno pheno
+#' @param phenoName pheno name
+#' @param hapPrefix hap  prefix
+#' @param  geneID gene ID forplot title
+#' @param mergeFigs merge heatmapand box plot ornot
+#' @importFrom stats na.omit t.test
+#' @importFrom rlang .data
+#' @export
 hapVsPheno = function(hap, pheno,phenoName,hapPrefix = "H", geneID = "Seita.1G000000", mergeFigs = T){
   if(missing(phenoName)) warning("phenoName is null, will use the first pheno")
   if(!(phenoName %in% colnames(pheno))) stop("Could not find ", phenoName, " in colnames of pheno")
@@ -40,7 +61,7 @@ hapVsPheno = function(hap, pheno,phenoName,hapPrefix = "H", geneID = "Seita.1G00
   pheno$Hap = haps[row.names(pheno)]
   phenop = na.omit(pheno)
   hps = table(phenop$Hap)
-  if(max(hps) < 5) next()
+  if(max(hps) < 5) stop("there is no haps to plot ( >5 accession with pheno )")
   hps = hps[hps >= 5]
 
   hpsnm = names(hps)
@@ -72,7 +93,7 @@ hapVsPheno = function(hap, pheno,phenoName,hapPrefix = "H", geneID = "Seita.1G00
   result$plotHap = plotHap
   result$T.Result = T.Result
   plotHap = unique(plotHap)
-  if(is.null(plotHap)) next()
+  if(is.null(plotHap)) stop("there is no haps to plot( >5 accession with pheno)")
   if(length(plotHap) > 1){
     T.Result = T.Result[!is.na(T.Result[, 1]), !is.na(T.Result[1, ])]
 
@@ -81,15 +102,17 @@ hapVsPheno = function(hap, pheno,phenoName,hapPrefix = "H", geneID = "Seita.1G00
     if(nrow(T.Result) > 1)  T.Result[lower.tri(T.Result)] = NA # 获得矩阵的上三角或下三角
     melResult = reshape2::melt(T.Result, na.rm = T)
 
+    melResult$label = ifelse(melResult$value>1,
+                       1, ifelse(melResult$value<0.001,
+                              0.001,round(melResult$value,3)))
     fig1 = ggplot2::ggplot(data = melResult,
-                           mapping = ggplot2::aes(x = Var1, y = Var2, fill = value)) +
+                           mapping = ggplot2::aes_(x =~Var1, y =~Var2, fill =~value)) +
       ggplot2::geom_tile(color = "white") +
       ggplot2::ggtitle(label = geneID,subtitle = phenoName)+
       ggplot2::scale_fill_gradientn(colours = c("red","grey", "grey90"),
                                     limit = c(0, 1.000001), name = parse(text = "italic(p)~value")) +
-      ggplot2::geom_text(ggplot2::aes(Var1, Var2,
-                                      label = ifelse(value < 0.001, "<0.001",
-                                                     ifelse(value >= 1, "1", round(value,3)))),
+      ggplot2::geom_text(ggplot2::aes_(x=~Var1, y=~Var2,
+                                      label =~ label),
                          color = "black", size = 4) +
       ggplot2::theme(
         axis.title.x =  ggplot2::element_blank(),
@@ -133,17 +156,3 @@ hapVsPheno = function(hap, pheno,phenoName,hapPrefix = "H", geneID = "Seita.1G00
   return(result)
 }
 
-#write.table(unique(sigPhenos),file = paste0(resultDir,geneID,"_",hapTypei,"significentPhenos.txt"), row.names = F,col.names = F,quote = F)
-#dev.off()
-
-#rm(list = ls())
-#setwd("/data/zhangrenliang/GeneFamily/kinesin/Haptype/")
-#vcf = import_vcf("vcf/cleanvcf/Seita.1G001600_136756_144094_-_3k_final.vcf.gz")
-#hap = get_hap(vcf)
-#hapResult = hap_result(hap, out =T)
-#plotHapTable(hapResult = hapResult)
-#gff = import_gff("gff/Yugu1.gff3")
-#plotGeneStructure(gff, hapResult)
-#phenos = import_pheno("/data/zhangrenliang/GeneFamily/kinesin/Haptype/pheno/allPheno.txt")
-
-#hapVsPhenos(hap, phenos[,1:2],hapPrefix = "H",geneID = "Seita.0G000000")
