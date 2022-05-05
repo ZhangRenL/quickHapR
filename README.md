@@ -10,23 +10,38 @@ Gitee 是 OSCHINA 推出的基于 Git 的代码托管平台（同时支持 SVN�
 
 
 #### 安装教程
-
-1.  xxxx
-2.  xxxx
-3.  xxxx
-
+```R
+if(!require("quickHapR")) 
+devtools::install_git("https://gitee.com/zhangrenl/quickhapr")
+```
 #### 使用说明
 
-1.  xxxx
-2.  xxxx
-3.  xxxx
+```R
+# 加载quickhapR
+library(quickHapR)
 
-#### 参与贡献
+# 设定工作目录
+setwd("/your_working_directory")
 
-1.  Fork 本仓库
-2.  新建 Feat_xxx 分支
-3.  提交代码
-4.  新建 Pull Request
+# 导入数据
+vcf = import_vcf("vcf/cleanvcf/Seita.1G001600_136756_144094_-_3k_final.vcf.gz")
+gff = import_gff("gff/Yugu1.gff3")
+phenos = import_pheno("/data/zhangrenliang/GeneFamily/kinesin/Haptype/pheno/allPheno.txt")
+
+# 计算并输出单倍型结果
+hap = get_hap(vcf)
+hapResult = hap_result(hap, out =T, )
+
+# 可视化单倍型结果
+plotGeneStructure(gff, hapResult)
+plotHapTable(hapResult = hapResult)
+
+# 单倍型与表型的关联分析
+hapVsPhenos(hap, phenos[,1:2],hapPrefix = "H",geneID = "Seita.0G000000")
+
+```
+
+
 
 
 #### 特技

@@ -14,9 +14,27 @@ Software architecture description
 
 #### Instructions
 
-1.  xxxx
-2.  xxxx
-3.  xxxx
+```R
+# 加载quickhapR
+library(quickHapR)
+
+# 设定工作目录
+setwd("/your_working_directory")
+
+# daoru
+vcf = import_vcf("vcf/cleanvcf/Seita.1G001600_136756_144094_-_3k_final.vcf.gz")
+gff = import_gff("gff/Yugu1.gff3")
+phenos = import_pheno("/data/zhangrenliang/GeneFamily/kinesin/Haptype/pheno/allPheno.txt")
+
+# generate haps
+hap = get_hap(vcf)
+hapResult = hap_result(hap, out =T)
+
+# plot and visualization your results
+plotGeneStructure(gff, hapResult)
+plotHapTable(hapResult = hapResult)
+hapVsPhenos(hap, phenos[,1:2],hapPrefix = "H",geneID = "Seita.0G000000")
+```
 
 #### Contribution
 
