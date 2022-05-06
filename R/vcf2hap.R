@@ -1,19 +1,3 @@
-#' @name import_vcf
-#' @title import vcf from file
-#' @description read and import vcf file
-#' @importFrom vcfR read.vcfR
-#' @author Zhangrenl
-#' @description  import vcf file
-#' @param vcf_file file path of vcf
-#' @param ... pass to vcfR::read.vcfR
-#' @usage import_vcf(vcf_file = vcf_file, ...)
-#' @export
-import_vcf <- function(vcf_file = vcf_file, ...) {
-  vcf = vcfR::read.vcfR(vcf_file, ...)
-  return(vcf)
-}
-
-
 #' @name get_hap
 #' @title generat haps from vcf
 #' @description  generate hap format from vcf
@@ -136,23 +120,3 @@ hap_result = function(hap, out = T, file = "hapResult.txt"){
   if(out)  utils::write.table(hapResults, file = file, sep = "\t",quote = F,row.names = F,col.names = F)
   return(hapResults)
 }
-
-#### Import the pipe operator from magrittr ####
-#' Pipe operator
-#'
-#' @name %>%
-#' @rdname pipe
-#' @keywords internal
-#' @export
-#' @importFrom magrittr %>%
-#' @usage lhs \%>\% rhs
-NULL
-
-
-#' @name %over%
-#' @keywords internal
-#' @export
-#' @importFrom IRanges %over%
-NULL
-
-

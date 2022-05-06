@@ -1,21 +1,8 @@
-#' @name import_pheno
-#' @title imports phenos from file
-#' @description 第一列为Accession
-#' 第二列起为表型，
-#' 第一行为表头（表型名称）：“表型名称（计量单位）.地点[年份]”
-#' @importFrom utils read.delim
-#' @param phenoFile pheno file path, should be a table separated by tab
-#' @param ... parameters will pass to read.delim
-#' @export
-import_pheno = function(phenoFile, ...){
-  phenos = utils::read.delim(phenoFile,
-                             check.names = F,
-                             row.names = 1,...)
-  return(phenos)
-}
+
 
 #' @name hapVsPhenos
 #' @title hapVsPhenoS
+#' @usage hapVsPhenos(hap, phenos,hapPrefix = "H",geneID = "Seita.0G000000", mergeFigs = T)
 #' @param hap hap
 #' @param phenos phenos
 #' @param hapPrefix hap  prefix
@@ -40,6 +27,7 @@ hapVsPhenos = function(hap, phenos,hapPrefix = "H",geneID = "Seita.0G000000", me
 
 #' @name hapVsPheno
 #' @title hapVsPheno
+#' @usage hapVsPheno(hap, pheno,phenoName,hapPrefix = "H", geneID = "Seita.1G000000", mergeFigs = T)
 #' @param hap hap
 #' @param pheno pheno
 #' @param phenoName pheno name

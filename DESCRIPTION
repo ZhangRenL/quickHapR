@@ -1,7 +1,7 @@
 Package: quickHapR
 Type: Package
 Title: What the Package Does (Title Case)
-Version: 0.1.0
+Version: 0.1.1
 Author: ZhangRenl
 Maintainer: Zhangrenliang <zhang_renliang@163.com>
 Description: A quick hap analysis R packages, depends on vcf files and phenos.

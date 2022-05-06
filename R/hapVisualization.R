@@ -1,5 +1,6 @@
 #' @name plotHapTable
 #' @title plotHapTable
+#' @usage plotHapTable(hapResult, hapPrefix = "H", geneID = "")
 #' @importFrom randomcoloR randomColor
 #' @importFrom stringr str_starts
 #' @importFrom stringr str_length
@@ -63,30 +64,23 @@ return(fig0)
 
 
 
-#' @name import_gff
-#' @title  import_gff
-#' @importFrom rtracklayer import
-#' @param gffFile gffFile
-#' @export
-import_gff = function(gffFile){
-  gff = rtracklayer::import(gffFile)
-  return(gff)
-}
 
 
 
 #' @name plotGeneStructure
 #' @title plotGeneStructure
+#' @usage plotGeneStructure(gff, hapResult, Chr, startPOS, endPOS)
 #' @importFrom trackViewer lolliplot
 #' @importFrom  GenomicRanges GRanges
 #' @importFrom  GenomicRanges strand
 #' @importFrom IRanges IRanges %over%
 #' @import tidyr
 #' @param gff gff
-#' @param hapResult hapResult
-#' @param Chr Chr
-#' @param startPOS startPOS
-#' @param endPOS endPOS
+#' @param hapResult ouput of hap_result(), a data.frame consistant
+#' with 4 metarows: Chr, POS, Allele and ANN, and each genotype of each hap
+#' @param Chr Chr, it will use the first Chr in the meta rows by defalt
+#' @param startPOS startPOS, it will use the min position in the second meta rows by defalt
+#' @param endPOS endPOS, it will use the max position in the second meta rows by defalt
 #' @export
 plotGeneStructure = function(gff, hapResult,
                              Chr,
@@ -95,11 +89,9 @@ plotGeneStructure = function(gff, hapResult,
   requireNamespace("trackViewer")
   requireNamespace("tidyr")
   if(missing(gff)) {
-    message("gfdf");
-    stop("missing gff")}
+    stop("gff is missing!")}
   if(missing('hapResult')) {
-    message("gf2f");
-    stop("missing hapResult")}
+    stop("hapResult is missing!")}
 
   geneElement = c("CDS","three_prime_UTR","five_prime_UTR")
   if("Accession" %in% colnames(hapResult)) hapResult = hapResult[,colnames(hapResult) != 'Accession']
