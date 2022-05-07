@@ -1,22 +1,29 @@
 #' @name plotHapTable
 #' @title plotHapTable
-#' @usage plotHapTable(hapResult, hapPrefix = "H", geneID = "")
+#' @usage plotHapTable(hapResult, hapPrefix = "H", geneID = "", title.color = "grey90")
 #' @importFrom randomcoloR randomColor
 #' @importFrom stringr str_starts
 #' @importFrom stringr str_length
 #' @import tidyr
 #' @import ggplot2
 #' @param hapResult hapResult
+#' @param title.color title.color
 #' @param hapPrefix hapPrefix
 #' @param geneID geneID
 #' @export
-plotHapTable <- function(hapResult, hapPrefix = "H", geneID = "")
+plotHapTable <- function(hapResult, hapPrefix = "H", geneID = "", title.color = "grey90")
 {
   requireNamespace('tidyr')
   if("Accession" %in% colnames(hapResult)) hapResult <- hapResult[,colnames(hapResult) != 'Accession']
   ALLELE <- hapResult[hapResult[,1] == "ALLELE",]
   hps <- hapResult[stringr::str_starts(hapResult[,1],hapPrefix),]
   hps <- rbind(ALLELE, hps)
+  lab <- hps
+  hps[1,-1] <- NA
+  meltHapRes <- reshape2::melt(hps,1)
+  colnames(meltHapRes) <- c('Var1','Var2',"value")
+
+  # foot and labs
   foot <- c()
   nfoot <- 1
   for(i in 2:length(ALLELE)){
@@ -24,15 +31,12 @@ plotHapTable <- function(hapResult, hapPrefix = "H", geneID = "")
       note <- paste0("*",nfoot,collapse = '')
       nfoot <- nfoot + 1
       foot <- c(foot,paste0(note,": ", ALLELE[i]))
-      ALLELE[i] <- note
+      lab[1,i] <- note
     }
   }
 
-  meltHapRes <- reshape2::melt(hps,1)
-  colnames(meltHapRes) <- c('Var1','Var2',"value")
-  lab <- meltHapRes
+  lab <- reshape2::melt(lab,1)
   lab$value <- stringr::str_replace_all(lab$value, c("AA"="A", "TT"="T","CC"="C","GG"="G","[+]{2}"="+","--"="-"))
-  lab[1,] = ALLELE
   meltHapRes$value[stringr::str_detect(meltHapRes$value,"[0-9]")] = NA
   levels <- as.vector(unique(meltHapRes$Var1))
   levels <- levels[order(levels, decreasing = T)]
@@ -43,7 +47,7 @@ plotHapTable <- function(hapResult, hapPrefix = "H", geneID = "")
     ggplot2::geom_tile(color = "white") +
     ggplot2::geom_text(ggplot2::aes_(x=~Var2, y=~Var1,
                                     label = lab$value)) +
-    ggplot2::scale_fill_discrete(na.value = "white") +
+    ggplot2::scale_fill_discrete(na.value = title.color) +
     ggplot2::labs(caption = foot) +
     ggplot2::ggtitle(label = geneID) +  ggplot2::scale_y_discrete() +
     ggplot2::scale_x_discrete(guide = ggplot2::guide_axis(position = "top")) +
