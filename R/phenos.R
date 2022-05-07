@@ -1,5 +1,3 @@
-
-
 #' @name hapVsPhenos
 #' @title hapVsPhenoS
 #' @usage hapVsPhenos(hap, phenos,hapPrefix = "H",geneID = "Seita.0G000000", mergeFigs = T)
@@ -10,19 +8,23 @@
 #' @param mergeFigs merge heatmapand box plot ornot
 #' @importFrom stats na.omit t.test
 #' @export
-hapVsPhenos = function(hap, phenos,hapPrefix = "H",geneID = "Seita.0G000000", mergeFigs = T){
-  # 表型关联
-  phenoNames = colnames(phenos)
-
-  Accs = row.names(phenos)
-  for (phenoName in phenoNames){
-    pheno = phenos[,phenoName]
-    pheno = as.data.frame(pheno,row.names = Accs)
-    colnames(pheno) = phenoName
-    results = hapVsPheno(hap, pheno, phenoName =  phenoName, hapPrefix=hapPrefix, geneID = geneID, mergeFigs = mergeFigs)
-  }
-  return(results)
-}
+NULL
+#hapVsPhenos <- function(hap, phenos,hapPrefix = "H",geneID = "Seita.0G000000", mergeFigs = T){
+#  # 表型关联
+#  phenoNames <- colnames(phenos)
+#
+#   Accs <- row.names(phenos)
+#   results = list()
+#   for (phenoName in phenoNames){
+#     pheno <- phenos[,phenoName]
+#     pheno <- as.data.frame(pheno,row.names = Accs)
+#     colnames(pheno) <- phenoName
+#     resulti <- hapVsPheno(hap, pheno, phenoName =  phenoName, hapPrefix=hapPrefix, geneID = geneID, mergeFigs = mergeFigs)
+#     results = c(results, resulti)
+#   }
+#
+#   return(results)
+# }
 
 
 #' @name hapVsPheno
@@ -37,63 +39,63 @@ hapVsPhenos = function(hap, phenos,hapPrefix = "H",geneID = "Seita.0G000000", me
 #' @importFrom stats na.omit t.test
 #' @importFrom rlang .data
 #' @export
-hapVsPheno = function(hap, pheno,phenoName,hapPrefix = "H", geneID = "Seita.1G000000", mergeFigs = T){
+hapVsPheno <- function(hap, pheno,phenoName,hapPrefix = "H", geneID = "Seita.1G000000", mergeFigs = T){
   if(missing(phenoName)) warning("phenoName is null, will use the first pheno")
   if(!(phenoName %in% colnames(pheno))) stop("Could not find ", phenoName, " in colnames of pheno")
-  result = list()
-  hap = hap[stringr::str_starts(hap[,1],hapPrefix),]
-  Accessions = hap[,colnames(hap) == "Accession"]
-  haps = hap[,1]
-  names(haps) = Accessions
+  result <- list()
+  hap <- hap[stringr::str_starts(hap[,1],hapPrefix),]
+  Accessions <- hap[,colnames(hap) == "Accession"]
+  haps <- hap[,1]
+  names(haps) <- Accessions
 
-  pheno$Hap = haps[row.names(pheno)]
-  phenop = na.omit(pheno)
-  hps = table(phenop$Hap)
+  pheno$Hap <- haps[row.names(pheno)]
+  phenop <- na.omit(pheno)
+  hps <- table(phenop$Hap)
   if(max(hps) < 5) stop("there is no haps to plot ( >5 accession with pheno )")
-  hps = hps[hps >= 5]
+  hps <- hps[hps >= 5]
 
-  hpsnm = names(hps)
-  hps = paste0(names(hps),"(",hps,")")
-  names(hps) = hpsnm
+  hpsnm <- names(hps)
+  hps <- paste0(names(hps),"(",hps,")")
+  names(hps) <- hpsnm
   # T 检验
-  plotHap = c()
-  my_comparisons = list()
-  T.Result = matrix(nrow = length(hpsnm),
+  plotHap <- c()
+  my_comparisons <- list()
+  T.Result <- matrix(nrow = length(hpsnm),
                     ncol = length(hpsnm))
-  colnames(T.Result)  = hpsnm
-  row.names(T.Result) = hpsnm
+  colnames(T.Result) <- hpsnm
+  row.names(T.Result) <- hpsnm
   for (m in 1:nrow(T.Result)) {
     for (n in nrow(T.Result):m) {
-      i = hpsnm[m]
-      j = hpsnm[n]
-      hapi = phenop[phenop$Hap == i, phenoName]
-      hapj = phenop[phenop$Hap == j, phenoName]
+      i <- hpsnm[m]
+      j <- hpsnm[n]
+      hapi <- phenop[phenop$Hap == i, phenoName]
+      hapj <- phenop[phenop$Hap == j, phenoName]
       if (length(hapi) >= 5 & length(hapj) >= 5) {
-        pvalue = try(t.test(hapi,hapj)$p.value,silent = T)
+        pvalue <- try(t.test(hapi,hapj)$p.value,silent = T)
 
-        T.Result[j, i] = ifelse(is.numeric(pvalue) & !is.na(pvalue) ,pvalue,1)
-        T.Result[i, j] = T.Result[j, i]
-        plotHap = c(plotHap, i, j)
-        if(T.Result[i, j] < 0.05) my_comparisons = c(my_comparisons, list(hps[c(i,j)]))
+        T.Result[j, i] <- ifelse(is.numeric(pvalue) & !is.na(pvalue) ,pvalue,1)
+        T.Result[i, j] <- T.Result[j, i]
+        plotHap <- c(plotHap, i, j)
+        if(T.Result[i, j] < 0.05) my_comparisons <- c(my_comparisons, list(hps[c(i,j)]))
       }
     }
   }
-  result$plotHap = plotHap
-  result$T.Result = T.Result
-  plotHap = unique(plotHap)
+  result$plotHap <- plotHap
+  result$T.Result <- T.Result
+  plotHap <- unique(plotHap)
   if(is.null(plotHap)) stop("there is no haps to plot( >5 accession with pheno)")
   if(length(plotHap) > 1){
-    T.Result = T.Result[!is.na(T.Result[, 1]), !is.na(T.Result[1, ])]
+    T.Result <- T.Result[!is.na(T.Result[, 1]), !is.na(T.Result[1, ])]
 
     # ggplot
 
     if(nrow(T.Result) > 1)  T.Result[lower.tri(T.Result)] = NA # 获得矩阵的上三角或下三角
-    melResult = reshape2::melt(T.Result, na.rm = T)
+    melResult <- reshape2::melt(T.Result, na.rm = T)
 
-    melResult$label = ifelse(melResult$value>1,
+    melResult$label <- ifelse(melResult$value>1,
                        1, ifelse(melResult$value<0.001,
                               0.001,round(melResult$value,3)))
-    fig1 = ggplot2::ggplot(data = melResult,
+    fig1 <- ggplot2::ggplot(data = melResult,
                            mapping = ggplot2::aes_(x =~Var1, y =~Var2, fill =~value)) +
       ggplot2::geom_tile(color = "white") +
       ggplot2::ggtitle(label = geneID,subtitle = phenoName)+
@@ -112,15 +114,15 @@ hapVsPheno = function(hap, pheno,phenoName,hapPrefix = "H", geneID = "Seita.1G00
         plot.subtitle = ggplot2::element_text(hjust = 0.5),
         plot.title = ggplot2::element_text(hjust = 0.5)) +
       ggplot2::guides(fill = ggplot2::guide_colorbar(title.position = "top", title.hjust = 0.5))
-  } else fig1 = ggplot2::ggplot() + ggplot2::theme_minimal()
+  } else fig1 <- ggplot2::ggplot() + ggplot2::theme_minimal()
 
   # 作图，箱线图
-  plotHap = plotHap[order(plotHap,decreasing = F)]
-  data = phenop[phenop$Hap %in% plotHap,]
-  data$Hap = hps[data$Hap]
+  plotHap <- plotHap[order(plotHap,decreasing = F)]
+  data <- phenop[phenop$Hap %in% plotHap,]
+  data$Hap <- hps[data$Hap]
 
-  if(length(my_comparisons) ==0) my_comparisons = F
-  fig2 = ggpubr::ggviolin(data, x = "Hap", y = phenoName, color = "Hap",
+  if(length(my_comparisons) ==0) my_comparisons <- F
+  fig2 <- ggpubr::ggviolin(data, x = "Hap", y = phenoName, color = "Hap",
                           caption = stringr::str_split(phenoName,"[.]")[[1]][2],
                           legend = "right", legend.title = "",
                           add = "boxplot")  + # 添加箱线图
@@ -133,12 +135,12 @@ hapVsPheno = function(hap, pheno,phenoName,hapPrefix = "H", geneID = "Seita.1G00
                                                        hjust = ifelse(length(hps) >= 6, 1, 0.5)),
                    plot.title = ggplot2::element_text(hjust = 0.5)) +
     ggplot2::ylab(stringr::str_split(phenoName,"[.]")[[1]][1])
-  fig3 = ggpubr::ggarrange(fig1, fig2, nrow = 1, labels = c("A","B"))
+  fig3 <- ggpubr::ggarrange(fig1, fig2, nrow = 1, labels = c("A","B"))
   if(mergeFigs)  {
-    result$figs = fig3
+    result$figs <- fig3
   } else {
-    result$fig_pvalue = fig1
-    result$fig_Violin = fig2
+    result$fig_pvalue <- fig1
+    result$fig_Violin <- fig2
   }
 
   return(result)

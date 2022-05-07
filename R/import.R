@@ -10,25 +10,27 @@
 #' @usage import_vcf(vcf_file = vcf_file, ...)
 #' @export
 import_vcf <- function(vcf_file = vcf_file, ...) {
-  vcf = vcfR::read.vcfR(vcf_file, ...)
+  vcf <- vcfR::read.vcfR(vcf_file, ...)
   return(vcf)
 }
 
 
 #' @name import_pheno
 #' @title imports phenos from file
-#' @usage import_pheno(phenoFile, ...)
+#' @usage import_pheno(phenoFile, comment.char = "#", ...)
 #' @description 第一列为Accession
 #' 第二列起为表型，
 #' 第一行为表头（表型名称）：“表型名称（计量单位）.地点[年份]”
 #' @importFrom utils read.delim
 #' @param phenoFile pheno file path, should be a table separated by tab
+#' @param comment.char comment.char, start with comment.char will be ignored
 #' @param ... parameters will pass to read.delim
 #' @export
-import_pheno = function(phenoFile, ...){
-  phenos = utils::read.delim(phenoFile,
+import_pheno <- function(phenoFile, comment.char = "#", ...){
+  phenos <- utils::read.delim(phenoFile,
                              check.names = F,
-                             row.names = 1,...)
+                             row.names = 1,
+                             comment.char = comment.char, ...)
   return(phenos)
 }
 
@@ -39,8 +41,8 @@ import_pheno = function(phenoFile, ...){
 #' @importFrom rtracklayer import
 #' @param gffFile gffFile
 #' @export
-import_gff = function(gffFile){
-  gff = rtracklayer::import(gffFile)
+import_gff <- function(gffFile){
+  gff <- rtracklayer::import(gffFile)
   return(gff)
 }
 

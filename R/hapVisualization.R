@@ -10,33 +10,34 @@
 #' @param hapPrefix hapPrefix
 #' @param geneID geneID
 #' @export
-plotHapTable = function(hapResult, hapPrefix = "H", geneID = ""){
+plotHapTable <- function(hapResult, hapPrefix = "H", geneID = "")
+{
   requireNamespace('tidyr')
-  if("Accession" %in% colnames(hapResult)) hapResult = hapResult[,colnames(hapResult) != 'Accession']
-  ALLELE = hapResult[hapResult[,1] == "ALLELE",]
-  hps = hapResult[stringr::str_starts(hapResult[,1],hapPrefix),]
-  hps = rbind(ALLELE, hps)
-  foot = c()
-  nfoot = 1
+  if("Accession" %in% colnames(hapResult)) hapResult <- hapResult[,colnames(hapResult) != 'Accession']
+  ALLELE <- hapResult[hapResult[,1] == "ALLELE",]
+  hps <- hapResult[stringr::str_starts(hapResult[,1],hapPrefix),]
+  hps <- rbind(ALLELE, hps)
+  foot <- c()
+  nfoot <- 1
   for(i in 2:length(ALLELE)){
     if(stringr::str_length(ALLELE[i]) > 3){
-      note = paste0("*",nfoot,collapse = '')
-      nfoot = nfoot + 1
-      foot = c(foot,paste0(note,": ", ALLELE[i]))
-      ALLELE[i] = note
+      note <- paste0("*",nfoot,collapse = '')
+      nfoot <- nfoot + 1
+      foot <- c(foot,paste0(note,": ", ALLELE[i]))
+      ALLELE[i] <- note
     }
   }
 
-  meltHapRes = reshape2::melt(hps,1)
-  colnames(meltHapRes) = c('Var1','Var2',"value")
-  lab = meltHapRes
-  lab$value = stringr::str_replace_all(lab$value, c("AA"="A", "TT"="T","CC"="C","GG"="G","[+]{2}"="+","--"="-"))
+  meltHapRes <- reshape2::melt(hps,1)
+  colnames(meltHapRes) <- c('Var1','Var2',"value")
+  lab <- meltHapRes
+  lab$value <- stringr::str_replace_all(lab$value, c("AA"="A", "TT"="T","CC"="C","GG"="G","[+]{2}"="+","--"="-"))
   meltHapRes$value[stringr::str_detect(meltHapRes$value,"[0-9]")] = NA
-  levels = as.vector(unique(meltHapRes$Var1))
-  levels = levels[order(levels, decreasing = T)]
-  meltHapRes$Var1 = factor(meltHapRes$Var1, levels = levels)
-  if(is.null(foot)) foot = " " else foot = paste(foot,collapse = ";")
-  fig0 = ggplot2::ggplot(data = meltHapRes,
+  levels <- as.vector(unique(meltHapRes$Var1))
+  levels <- levels[order(levels, decreasing = T)]
+  meltHapRes$Var1 <- factor(meltHapRes$Var1, levels = levels)
+  if(is.null(foot)) foot <- " " else foot <- paste(foot,collapse = ";")
+  fig0 <- ggplot2::ggplot(data = meltHapRes,
                          mapping = ggplot2::aes_(x=~Var2, y=~Var1, fill=~value)) +
     ggplot2::geom_tile(color = "white") +
     ggplot2::geom_text(ggplot2::aes_(x=~Var2, y=~Var1,
@@ -82,7 +83,7 @@ return(fig0)
 #' @param startPOS startPOS, it will use the min position in the second meta rows by defalt
 #' @param endPOS endPOS, it will use the max position in the second meta rows by defalt
 #' @export
-plotGeneStructure = function(gff, hapResult,
+plotGeneStructure <- function(gff, hapResult,
                              Chr,
                              startPOS, endPOS){
 # lolliplot
@@ -93,15 +94,15 @@ plotGeneStructure = function(gff, hapResult,
   if(missing('hapResult')) {
     stop("hapResult is missing!")}
 
-  geneElement = c("CDS","three_prime_UTR","five_prime_UTR")
-  if("Accession" %in% colnames(hapResult)) hapResult = hapResult[,colnames(hapResult) != 'Accession']
-  meta = hapResult[1:4,-1]
-  POS = as.numeric(meta[2,])
-  SNP = meta[4,]
+  geneElement <- c("CDS","three_prime_UTR","five_prime_UTR")
+  if("Accession" %in% colnames(hapResult)) hapResult <- hapResult[,colnames(hapResult) != 'Accession']
+  meta <- hapResult[1:4,-1]
+  POS <- as.numeric(meta[2,])
+  SNP <- meta[4,]
 
-  if(missing(Chr)) Chr = meta[1,1]
-  if(missing(startPOS)) startPOS = min(POS)
-  if(missing(endPOS)) endPOS = max(POS)
+  if(missing(Chr)) Chr <- meta[1,1]
+  if(missing(startPOS)) startPOS <- min(POS)
+  if(missing(endPOS)) endPOS <- max(POS)
 
   SNP.gr <- GenomicRanges::GRanges(Chr, IRanges::IRanges(POS, width=1,
                                  names = paste0(POS,"(",SNP,")")),
@@ -111,26 +112,26 @@ plotGeneStructure = function(gff, hapResult,
 
 
 
-  gene = GenomicRanges::GRanges(Chr,
+  gene <- GenomicRanges::GRanges(Chr,
                  IRanges::IRanges(start = min(startPOS,endPOS),
                          end = max(startPOS,endPOS)))
-  over = gff[gff %over% gene]
-  over$height[over$type == "CDS"] = 0.05
-  over$height[over$type == "three_prime_UTR"] = 0.01
-  over$height[over$type == "five_prime_UTR"] = 0.015
+  over <- gff[gff %over% gene]
+  over$height[over$type == "CDS"] <- 0.05
+  over$height[over$type == "three_prime_UTR"] <- 0.01
+  over$height[over$type == "five_prime_UTR"] <- 0.015
 
-  features = over[over$type %in% geneElement]
-  strands = as.character(GenomicRanges::strand(features))
-  layerID = unlist(features$Parent)
-  layerID = stringr::str_remove_all(layerID,".v2.2")
-  layerID = paste0(layerID,"(",ifelse(strands == "+", "5'->3'","3'<-5'"),")")
-  features$featureLayerID = layerID
-  names(features) = features$featureLayerID
-  l = length(unique(names(features)))
-  if (l < 6) fillc = c((1:l) + 1) else fillc = randomcoloR::randomColor(l)
+  features <- over[over$type %in% geneElement]
+  strands <- as.character(GenomicRanges::strand(features))
+  layerID <- unlist(features$Parent)
+  layerID <- stringr::str_remove_all(layerID,".v2.2")
+  layerID <- paste0(layerID,"(",ifelse(strands == "+", "5'->3'","3'<-5'"),")")
+  features$featureLayerID <- layerID
+  names(features) <- features$featureLayerID
+  l <- length(unique(names(features)))
+  if (l < 6) fillc <- c((1:l) + 1) else fillc <- randomcoloR::randomColor(l)
 
-  names(fillc) = unique(names(features))
-  features$fill = fillc[names(features)]
+  names(fillc) <- unique(names(features))
+  features$fill <- fillc[names(features)]
   # features = c(gene, features)
 
   trackViewer::lolliplot(SNP.gr, features, type = "pin", jitter = NULL, ylab = "",cex = 0.5,yaxis = F)
