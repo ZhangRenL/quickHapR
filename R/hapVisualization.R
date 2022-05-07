@@ -101,6 +101,7 @@ plotGeneStructure <- function(gff, hapResult,
 
   geneElement <- c("CDS","three_prime_UTR","five_prime_UTR")
   meta <- hapResult[1:4,-1]
+  meta[meta == ""] =NA
   meta <- meta[,!is.na(meta[1,])]
   POS <- as.numeric(meta[2,])
   SNP <- meta[4,]
