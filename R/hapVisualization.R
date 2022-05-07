@@ -98,17 +98,25 @@ plotGeneStructure <- function(gff, hapResult,
     stop("gff is missing!")}
   if(missing('hapResult')) {
     stop("hapResult is missing!")}
+  if(missing(Chr)) Chr <- hapResult[1,1]
+  POS <- hapResult[2,] %>% as.numeric()
+
+  POS <- POS[!is.na(POS)]
+  if(missing(startPOS)) startPOS <- min(POS)
+  if(missing(endPOS)) endPOS <- max(POS)
+
 
   geneElement <- c("CDS","three_prime_UTR","five_prime_UTR")
   meta <- hapResult[1:4,-1]
-  meta[meta == ""] =NA
-  meta <- meta[,!is.na(meta[1,])]
-  POS <- as.numeric(meta[2,])
+  if("Accession" %in% colnames(meta)) meta <- meta[,colnames(meta) != "Accession"]
+  if("freq" %in% colnames(meta)) meta <- meta[,colnames(meta) != "freq"]
+  #meta <- hapResult[1:4,]
+  #meta <- meta[,-ncol(meta)]
+  #meta[meta == ""] = NA
+  #meta <- meta[,!is.na(meta[1,])]
+  #POS <- as.numeric(meta[2,])
   SNP <- meta[4,]
 
-  if(missing(Chr)) Chr <- meta[1,1]
-  if(missing(startPOS)) startPOS <- min(POS)
-  if(missing(endPOS)) endPOS <- max(POS)
 
   SNP.gr <- GenomicRanges::GRanges(Chr, IRanges::IRanges(POS, width=1,
                                  names = paste0(POS,"(",SNP,")")),
