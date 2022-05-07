@@ -32,6 +32,7 @@ plotHapTable <- function(hapResult, hapPrefix = "H", geneID = "")
   colnames(meltHapRes) <- c('Var1','Var2',"value")
   lab <- meltHapRes
   lab$value <- stringr::str_replace_all(lab$value, c("AA"="A", "TT"="T","CC"="C","GG"="G","[+]{2}"="+","--"="-"))
+  lab[1,] = ALLELE
   meltHapRes$value[stringr::str_detect(meltHapRes$value,"[0-9]")] = NA
   levels <- as.vector(unique(meltHapRes$Var1))
   levels <- levels[order(levels, decreasing = T)]

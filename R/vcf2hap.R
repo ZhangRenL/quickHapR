@@ -27,6 +27,8 @@ get_hap <- function(vcf,
                     filter_POS = F, startPOS = as.numeric(), endPOS = as.numeric(),
                     hyb_remove = T,
                     na.drop = T) {
+  # to do: add a filter_vcf function
+  # for choose promoter, gene, downstream range for haplotyoe analysis
   requireNamespace('tidyr')
   requireNamespace('dplyr')
   if(filter_Chr){

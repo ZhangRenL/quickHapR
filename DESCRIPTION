@@ -1,7 +1,7 @@
 Package: quickHapR
 Type: Package
 Title: R Packages for Gene Haplotype Analysis
-Version: 0.1.2
+Version: 0.1.3
 Author: ZhangRenliang
 Maintainer: ZhangRenliang <zhang_renliang@163.com>
 Description: A quick hap analysis R packages, depends on vcf files and phenos.
@@ -9,10 +9,8 @@ Encoding: UTF-8
 LazyData: true
 RoxygenNote: 7.1.2
 Imports: 
-  vcfR,
   tidyr,
   dplyr,
-  ggplot2,
   reshape2, 
   ggpubr, 
   stringr, 
@@ -23,4 +21,7 @@ Imports:
   GenomicRanges,
   IRanges,
   rlang
+Depends:  
+  vcfR,
+  ggplot2
 License: GPL-3
