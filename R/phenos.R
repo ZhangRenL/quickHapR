@@ -20,7 +20,8 @@ hapVsPheno <- function(hap, pheno,phenoName,hapPrefix = "H", geneID = "Seita.1G0
   names(haps) <- Accessions
 
   pheno$Hap <- haps[row.names(pheno)]
-  phenop <- na.omit(pheno)
+  phenop <- pheno[,c("Hap",phenoName)]
+  phenop <- na.omit(phenop)
   hps <- table(phenop$Hap)
   if(max(hps) < 5) stop("there is no haps to plot ( >5 accession with pheno )")
   hps <- hps[hps >= 5]
@@ -88,8 +89,9 @@ hapVsPheno <- function(hap, pheno,phenoName,hapPrefix = "H", geneID = "Seita.1G0
   } else fig1 <- ggplot2::ggplot() + ggplot2::theme_minimal()
 
   # 作图，箱线图
-  plotHap <- plotHap[order(plotHap,decreasing = F)]
   data <- phenop[phenop$Hap %in% plotHap,]
+  data <- data[order(data$Hap,decreasing = F),]
+
   data$Hap <- hps[data$Hap]
 
   if(length(my_comparisons) ==0) my_comparisons <- F

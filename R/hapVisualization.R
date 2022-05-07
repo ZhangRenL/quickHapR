@@ -100,8 +100,8 @@ plotGeneStructure <- function(gff, hapResult,
     stop("hapResult is missing!")}
 
   geneElement <- c("CDS","three_prime_UTR","five_prime_UTR")
-  if("Accession" %in% colnames(hapResult)) hapResult <- hapResult[,colnames(hapResult) != 'Accession']
   meta <- hapResult[1:4,-1]
+  meta <- meta[,!is.na(meta[1,])]
   POS <- as.numeric(meta[2,])
   SNP <- meta[4,]
 

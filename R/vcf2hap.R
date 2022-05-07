@@ -139,10 +139,11 @@ hap_result <- function(hap, out = T, file = "hapResult.txt"){
   hapfre <- table(hapResults[,1])
   hapfre <- hapfre[stringr::str_starts(names(hapfre),"H")]
   hapResults <- hapResults %>% tidyr::chop(cols = "Accession")
-  hapResults$freq[5:nrow(hapResults)] <- hapfre[hapResults$POS[5:nrow(hapResults)]]
+  hapResults$freq[5:nrow(hapResults)] <- hapfre[hapResults[5:nrow(hapResults),1]]
   Acc <- c()
   for(i in 1:length(hapResults$Accession))  Acc[i] <- paste(hapResults$Accession[[i]],collapse = ";")
   hapResults$Accession <- Acc
+
   if(out)  utils::write.table(hapResults, file = file, sep = "\t",quote = F,row.names = F,col.names = F)
   return(hapResults)
 }
