@@ -1,32 +1,3 @@
-#' @name hapVsPhenos
-#' @title hapVsPhenoS
-#' @usage hapVsPhenos(hap, phenos,hapPrefix = "H",geneID = "Seita.0G000000", mergeFigs = T)
-#' @param hap hap
-#' @param phenos phenos
-#' @param hapPrefix hap  prefix
-#' @param  geneID gene ID forplot title
-#' @param mergeFigs merge heatmapand box plot ornot
-#' @importFrom stats na.omit t.test
-#' @export
-NULL
-#hapVsPhenos <- function(hap, phenos,hapPrefix = "H",geneID = "Seita.0G000000", mergeFigs = T){
-#  # 表型关联
-#  phenoNames <- colnames(phenos)
-#
-#   Accs <- row.names(phenos)
-#   results = list()
-#   for (phenoName in phenoNames){
-#     pheno <- phenos[,phenoName]
-#     pheno <- as.data.frame(pheno,row.names = Accs)
-#     colnames(pheno) <- phenoName
-#     resulti <- hapVsPheno(hap, pheno, phenoName =  phenoName, hapPrefix=hapPrefix, geneID = geneID, mergeFigs = mergeFigs)
-#     results = c(results, resulti)
-#   }
-#
-#   return(results)
-# }
-
-
 #' @name hapVsPheno
 #' @title hapVsPheno
 #' @usage hapVsPheno(hap, pheno,phenoName,hapPrefix = "H", geneID = "Seita.1G000000", mergeFigs = T)
@@ -146,3 +117,31 @@ hapVsPheno <- function(hap, pheno,phenoName,hapPrefix = "H", geneID = "Seita.1G0
   return(result)
 }
 
+
+# @name hapVsPhenos
+# @title hapVsPhenoS
+# @usage hapVsPhenos(hap, phenos,hapPrefix = "H",geneID = "Seita.0G000000", mergeFigs = T)
+# @param hap hap
+# @param phenos phenos
+# @param hapPrefix hap  prefix
+# @param  geneID gene ID forplot title
+# @param mergeFigs merge heatmapand box plot ornot
+# @importFrom stats na.omit t.test
+# @export
+NULL
+#hapVsPhenos <- function(hap, phenos,hapPrefix = "H",geneID = "Seita.0G000000", mergeFigs = T){
+#  # 表型关联
+#  phenoNames <- colnames(phenos)
+#
+#   Accs <- row.names(phenos)
+#   results = list()
+#   for (phenoName in phenoNames){
+#     pheno <- phenos[,phenoName]
+#     pheno <- as.data.frame(pheno,row.names = Accs)
+#     colnames(pheno) <- phenoName
+#     resulti <- hapVsPheno(hap, pheno, phenoName =  phenoName, hapPrefix=hapPrefix, geneID = geneID, mergeFigs = mergeFigs)
+#     results = c(results, resulti)
+#   }
+#
+#   return(results)
+# }

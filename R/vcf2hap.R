@@ -13,11 +13,13 @@
 #' @importFrom rlang .data
 #' @importFrom  stats na.omit
 #' @param vcf vcf
-#' @param filter_Chr filter_Chr
-#' @param filter_POS filter_POS
-#' @param hap_prefix hap_prefix
-#' @param  hyb_remove hyb_remove
-#' @param na.drop na.drop
+#' @param filter_Chr filter vcf by Chrome or not, defalt is FALSE. If TRUE, the Chr is needed.
+#' @param filter_POS filter vcf by Position or not, defalt is FALSE. If TRUE, startPOS and endPOS are needed.
+#' @param hap_prefix hap_prefix, defalt is "H"
+#' @param hyb_remove Remove accessions contains hybrid site or not. Defalt is TRUE.
+#' @param na.drop Drop Accessions contains unknown allele site or note. Defalt is TRUE
+#' @param Chr Needed for filter vcf by Chrom
+#' @param startPOS,endPOS Needed for filter vcf by position. startPOS must less than endPOS
 #' @export
 get_hap <- function(vcf,
                     hap_prefix = "H",
