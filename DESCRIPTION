@@ -1,7 +1,7 @@
 Package: quickHapR
 Type: Package
 Title: R Packages for Gene Haplotype Analysis
-Version: 0.2.0
+Version: 0.2.1
 Author: ZhangRenliang
 Maintainer: ZhangRenliang <zhang_renliang@163.com>
 Description: A quick hap analysis R packages, depends on vcf files and phenos.

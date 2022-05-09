@@ -1,6 +1,6 @@
 #' @name hapVsPheno
 #' @title hapVsPheno
-#' @usage hapVsPheno(hap, pheno,phenoName,hapPrefix = "H", geneID = "Seita.1G000000", mergeFigs = T)
+#' @usage hapVsPheno(hap, pheno,phenoName,hapPrefix = "H", geneID = "Seita.1G000000", mergeFigs = T, minPhenoNumber = 5)
 #' @param hap hap
 #' @param pheno pheno
 #' @param phenoName pheno name
@@ -10,7 +10,13 @@
 #' @importFrom stats na.omit t.test
 #' @importFrom rlang .data
 #' @export
-hapVsPheno <- function(hap, pheno,phenoName,hapPrefix = "H", geneID = "Seita.1G000000", mergeFigs = T){
+hapVsPheno <- function(hap,
+                       pheno,
+                       phenoName,
+                       hapPrefix = "H",
+                       geneID = "Seita.1G000000",
+                       mergeFigs = T,
+                       minPhenoNumber = 5){
   if(missing(phenoName)) warning("phenoName is null, will use the first pheno")
   if(!(phenoName %in% colnames(pheno))) stop("Could not find ", phenoName, " in colnames of pheno")
   result <- list()
@@ -22,13 +28,17 @@ hapVsPheno <- function(hap, pheno,phenoName,hapPrefix = "H", geneID = "Seita.1G0
   pheno$Hap <- haps[row.names(pheno)]
   phenop <- pheno[,c("Hap",phenoName)]
   phenop <- na.omit(phenop)
+  if(nrow(phenop) == 0) stop("After removed NAs, accession with certain Hap have no observations of ", phenoName,". Please check your pheno file.")
   hps <- table(phenop$Hap)
-  if(max(hps) < 5) stop("there is no haps to plot ( >5 accession with pheno )")
-  hps <- hps[hps >= 5]
+
+  # filter Haps for plot
+  if(max(hps) < minPhenoNumber) stop("there is no haps to plot (no Haps with observations more than ",minPhenoNumber)
+  hps <- hps[hps >= minPhenoNumber]
 
   hpsnm <- names(hps)
   hps <- paste0(names(hps),"(",hps,")")
   names(hps) <- hpsnm
+
   # T 检验
   plotHap <- c()
   my_comparisons <- list()
@@ -42,7 +52,7 @@ hapVsPheno <- function(hap, pheno,phenoName,hapPrefix = "H", geneID = "Seita.1G0
       j <- hpsnm[n]
       hapi <- phenop[phenop$Hap == i, phenoName]
       hapj <- phenop[phenop$Hap == j, phenoName]
-      if (length(hapi) >= 5 & length(hapj) >= 5) {
+      if (length(hapi) >= minPhenoNumber & length(hapj) >= minPhenoNumber) {
         pvalue <- try(t.test(hapi,hapj)$p.value,silent = T)
 
         T.Result[j, i] <- ifelse(is.numeric(pvalue) & !is.na(pvalue) ,pvalue,1)
@@ -55,7 +65,7 @@ hapVsPheno <- function(hap, pheno,phenoName,hapPrefix = "H", geneID = "Seita.1G0
   result$plotHap <- plotHap
   result$T.Result <- T.Result
   plotHap <- unique(plotHap)
-  if(is.null(plotHap)) stop("there is no haps to plot( >5 accession with pheno)")
+  if(is.null(plotHap)) stop("there is no haps to plot (no Haps with observations more than ",minPhenoNumber)
   if(length(plotHap) > 1){
     T.Result <- T.Result[!is.na(T.Result[, 1]), !is.na(T.Result[1, ])]
 
@@ -65,8 +75,10 @@ hapVsPheno <- function(hap, pheno,phenoName,hapPrefix = "H", geneID = "Seita.1G0
     melResult <- reshape2::melt(T.Result, na.rm = T)
 
     melResult$label <- ifelse(melResult$value>1,
-                       1, ifelse(melResult$value<0.001,
-                              0.001,round(melResult$value,3)))
+                       1,
+                       ifelse(melResult$value<0.001,
+                              0.001,
+                              round(melResult$value,3)))
     fig1 <- ggplot2::ggplot(data = melResult,
                            mapping = ggplot2::aes_(x =~Var1, y =~Var2, fill =~value)) +
       ggplot2::geom_tile(color = "white") +

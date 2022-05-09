@@ -4,7 +4,7 @@
 \alias{plotHapTable}
 \title{plotHapTable}
 \usage{
-plotHapTable(hapResult, hapPrefix = "H", geneID = "")
+plotHapTable(hapResult, hapPrefix = "H", geneID = "", title.color = "grey90")
 }
 \arguments{
 \item{hapResult}{hapResult}
@@ -12,6 +12,8 @@ plotHapTable(hapResult, hapPrefix = "H", geneID = "")
 \item{hapPrefix}{hapPrefix}
 
 \item{geneID}{geneID}
+
+\item{title.color}{title.color}
 }
 \description{
 plotHapTable

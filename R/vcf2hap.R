@@ -39,16 +39,25 @@ get_hap <- function(vcf,
     vcf@gt <- vcf@gt[probe,]
   }
 
+  # filter Postion according given range
   if(filter_POS){
     if(missing(startPOS)) stop("startPOS must be numeric")
     if(missing(endPOS)) stop("endPOS must be numeric")
     if(startPOS >= endPOS) stop("startPOS must less tan endPOS")
     vcfPOS <- as.numeric(vcf@fix[,2])
-    probe <- vcfPOS >= startPOS & vcfPOS <= endPOS
+    probe <- c(vcfPOS >= startPOS & vcfPOS <= endPOS)
+
+    #
+    if(!(TRUE %in% probe)) {
+      e = paste0("There is no variant in selected range. \nPlease check vcf file between ",
+                 startPOS," and ", endPOS, ".")
+      return(e)
+    }
     vcf@fix <- vcf@fix[probe,]
     vcf@gt <- vcf@gt[probe,]
   }
 
+  # vcf2data.frame for analysis
   gt <- vcfR::extract_gt_tidy(vcf)
   CHR <- vcfR::getCHROM(vcf)
   POS <- vcfR::getPOS(vcf)
@@ -63,6 +72,7 @@ get_hap <- function(vcf,
   hap <- dplyr::select(hap, -c(.data$Key))
   hap <- as.matrix(hap)
   rownames(hap) <- POS
+
   # convert Indel into +/-
   for(l in 1:nrow(hap)){
     if(stringr::str_length(ALLELE[l]) > 3){
@@ -81,12 +91,7 @@ get_hap <- function(vcf,
     }
   }
 
-  #
-  hap <- t(hap)
-  hap[hap == "."] <- NA
-  if(na.drop) hap <- na.omit(hap)
-
-  # deal with heterozygosis &
+  # deal with heterozygosis site set as "H"
   probe_hyb <- c("AA","CC","GG","TT","++","--")
   hap[!(hap %in% probe_hyb)] <- "H"
   if(hyb_remove) {
@@ -94,6 +99,14 @@ get_hap <- function(vcf,
     hap <- na.omit(hap)
   }
 
+  # drop na rows
+  hap <- t(hap)
+  hap[hap == "."] <- NA
+  if(na.drop) hap <- na.omit(hap)
+
+
+  # reform the genotypes
+  # A/A -> A; T/T ->T; C/C -> C; G/G ->G
   for(i in probe_hyb) {
     hap[hap == i] <- stringr::str_sub(i,1,1)
   }
