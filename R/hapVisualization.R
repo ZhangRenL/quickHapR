@@ -90,7 +90,7 @@ return(fig0)
 #' @export
 plotGeneStructure <- function(gff, hapResult,
                              Chr,
-                             startPOS, endPOS){
+                             startPOS, endPOS, cex = 1){
 # lolliplot
   requireNamespace("trackViewer")
   requireNamespace("tidyr")
@@ -132,7 +132,7 @@ plotGeneStructure <- function(gff, hapResult,
   over <- gff[gff %over% gene]
   over$height[over$type == "CDS"] <- 0.05
   over$height[over$type == "three_prime_UTR"] <- 0.01
-  over$height[over$type == "five_prime_UTR"] <- 0.015
+  over$height[over$type == "five_prime_UTR"] <- 0.02
 
   features <- over[over$type %in% geneElement]
   strands <- as.character(GenomicRanges::strand(features))
@@ -146,8 +146,8 @@ plotGeneStructure <- function(gff, hapResult,
 
   names(fillc) <- unique(names(features))
   features$fill <- fillc[names(features)]
-  # features = c(gene, features)
+  features = c(gene, features)
 
-  trackViewer::lolliplot(SNP.gr, features, type = "pin", jitter = NULL, ylab = "",cex = 0.5,yaxis = F)
+  trackViewer::lolliplot(SNP.gr, features, type = "pin", jitter = NULL, ylab = "",cex = cex,yaxis = F)
 }
 
