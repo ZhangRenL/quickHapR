@@ -73,17 +73,20 @@ get_hap <- function(vcf,
   hap <- as.matrix(hap)
   rownames(hap) <- POS
 
+  # convert "." into "N/N"
+  hap[hap == "."] <- "N/N"
+
   # convert Indel into +/-
   for(l in 1:nrow(hap)){
     if(stringr::str_length(ALLELE[l]) > 3){
       if(stringr::str_length(REF[l]) > stringr::str_length(ALT[l])){
-        gety <- c("++", "+-","-+","--")
+        gety <- c("++", "+-","-+","--","NN")
       } else {
-        gety <- c("--", "-+","+-","++")
+        gety <- c("--", "-+","+-","++","NN")
       }
       REFl <- REF[l]
       ALTl <- ALT[l]
-      names(gety) <- paste(c(REFl,REFl,ALTl,ALTl),c(REFl,ALTl,REFl,ALTl),sep = "/")
+      names(gety) <- paste(c(REFl,REFl,ALTl,ALTl,"N"),c(REFl,ALTl,REFl,ALTl,"N"),sep = "/")
       probe <- hap[l,]
       hap[l,] <- gety[probe]
     } else {
@@ -94,23 +97,35 @@ get_hap <- function(vcf,
   hap <- t(hap)
 
 
-  # deal with heterozygosis site set as "H"
+  # reform the genotypes
+  # +/-,-/+ ->H
+  # A/G,A/T,A/C -> H
+  # C/A,C/G,C/T -> H
+  # G/A,G/T,G/A -> H
+  # T/A,T/G,T/C -> H
+  # ++ -> +; -- -> -
+  # A/A -> A; T/T ->T; C/C -> C; G/G ->G
+  # N/N -> N
   probe_hyb <- c("AA","CC","GG","TT","++","--")
   hap[!(hap %in% probe_hyb)] <- "H"
+
+  for(i in probe_hyb) {
+    hap[hap == i] <- stringr::str_sub(i,1,1)
+  }
+
+  hap[hap == "NN"] <- NA
+
+
+  # Drop hyb
   if(hyb_remove) {
-    hap[!(hap %in% probe_hyb)] <- NA
+    hap[hap == "H"] <- NA
     hap <- na.omit(hap)
   }
 
-  # drop na rows
-  hap[hap == "."] <- NA
-  if(na.drop) hap <- na.omit(hap)
-
-
-  # reform the genotypes
-  # A/A -> A; T/T ->T; C/C -> C; G/G ->G
-  for(i in probe_hyb) {
-    hap[hap == i] <- stringr::str_sub(i,1,1)
+  # Drop N
+  if(na.drop) {
+    hap[hap == "N"] <- NA
+    hap <- na.omit(hap)
   }
 
 
