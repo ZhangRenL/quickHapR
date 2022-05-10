@@ -29,8 +29,16 @@ gff = import_gff("gff/Yugu1.gff3")
 phenos = import_pheno("pheno/allPheno.txt")
 
 # 计算并输出单倍型结果
-hap = get_hap(vcf, filter_Chr = T, Chr = "scaffold_1", filter_POS = T, startPOS = 136756, endPOS = 144094)
-hapResult = hap_result(hap, out =T, file = "results/Seita.1G001600_hapResult.txt")
+# hap and 
+hap = get_hap(vcf,                 # vcf imported by import_vcf()
+              filter_Chr = F,      # Filter vcf by Chrom or not,defalt is false.
+              Chr = "scaffold_1",  # Needed if filter_Chr is TRUE.
+              filter_POS = T,      # Filter vcf by Position or not, defalt is TRUE
+              startPOS = 136756,   # Numeric, start postion. Needed if filter_POS is TRUE.
+              endPOS = 144094)     # Numeric, end position. Needed if filter_POS is TRUE.
+hapResult = hap_result(hap,        # hap produced by get_hap()
+                       out =T,     # Write the results or not, defalt is TRUE and file is needed
+                       file = "results/Seita.1G001600_hapResult.txt") 
   
 # 可视化单倍型结果
 plotGeneStructure(gff, hapResult)

@@ -4,7 +4,7 @@
 \alias{hapVsPheno}
 \title{hapVsPheno}
 \usage{
-hapVsPheno(hap, pheno,phenoName,hapPrefix = "H", geneID = "Seita.1G000000", mergeFigs = T)
+hapVsPheno(hap, pheno,phenoName,hapPrefix = "H", geneID = "Seita.1G000000", mergeFigs = T, minPhenoNumber = 5)
 }
 \arguments{
 \item{hap}{hap}

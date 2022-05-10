@@ -23,5 +23,12 @@ Imports:
   rlang
 Depends:  
   vcfR,
-  ggplot2
+  ggplot2,
+  stringr, 
+  randomcoloR,
+  rtracklayer, 
+  trackViewer,
+  magrittr,
+  GenomicRanges,
+  IRanges,
 License: GPL-3
