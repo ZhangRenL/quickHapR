@@ -75,11 +75,20 @@ return(fig0)
 
 #' @name plotGeneStructure
 #' @title plotGeneStructure
-#' @usage plotGeneStructure(gff, hapResult, Chr, startPOS, endPOS)
+#' @usage plotGeneStructure(gff, hapResult,
+#' Chr,
+#' startPOS, endPOS,
+#' type = "pin", cex = 1,
+#' CDS_h = 0.05, fiveUTR_h = 0.02, threeUTR_h = 0.01)
 #' @importFrom trackViewer lolliplot
 #' @importFrom  GenomicRanges GRanges
 #' @importFrom  GenomicRanges strand
 #' @importFrom IRanges IRanges %over%
+#' @importFrom BiocGenerics start
+#' @importFrom BiocGenerics end
+#' @importFrom BiocGenerics which
+#' @importFrom GenomicRanges `start<-`
+#' @importFrom GenomicRanges `end<-`
 #' @import tidyr
 #' @param gff gff
 #' @param hapResult ouput of hap_result(), a data.frame consistant
@@ -87,10 +96,15 @@ return(fig0)
 #' @param Chr Chr, it will use the first Chr in the meta rows by defalt
 #' @param startPOS startPOS, it will use the min position in the second meta rows by defalt
 #' @param endPOS endPOS, it will use the max position in the second meta rows by defalt
+#' @param cex cex will control the size of circle.
+#' @param type character. Could be circle, pie, pin, pie.stack or flag
+#' @param CDS_h,fiveUTR_h,threeUTR_h The height of CDS 5'UTR and 3'UTR
 #' @export
 plotGeneStructure <- function(gff, hapResult,
-                             Chr,
-                             startPOS, endPOS, cex = 1){
+                              Chr,
+                              startPOS, endPOS,
+                              type = "pin", cex = 1,
+                              CDS_h = 0.05, fiveUTR_h = 0.02, threeUTR_h = 0.01){
 # lolliplot
   requireNamespace("trackViewer")
   requireNamespace("tidyr")
@@ -125,14 +139,14 @@ plotGeneStructure <- function(gff, hapResult,
                     angle = 45)
 
 
-
-  gene <- GenomicRanges::GRanges(Chr,
+  # set plot ranges
+  plotRange <- GenomicRanges::GRanges(Chr,
                  IRanges::IRanges(start = min(startPOS,endPOS),
                          end = max(startPOS,endPOS)))
   over <- gff[gff %over% gene]
-  over$height[over$type == "CDS"] <- 0.05
-  over$height[over$type == "three_prime_UTR"] <- 0.01
-  over$height[over$type == "five_prime_UTR"] <- 0.02
+  over$height[over$type == "CDS"] <- CDS_h
+  over$height[over$type == "three_prime_UTR"] <- threeUTR_h
+  over$height[over$type == "five_prime_UTR"] <- fiveUTR_h
 
   features <- over[over$type %in% geneElement]
   strands <- as.character(GenomicRanges::strand(features))
@@ -146,8 +160,12 @@ plotGeneStructure <- function(gff, hapResult,
 
   names(fillc) <- unique(names(features))
   features$fill <- fillc[names(features)]
-  features = c(gene, features)
 
-  trackViewer::lolliplot(SNP.gr, features, type = "pin", jitter = NULL, ylab = "",cex = cex,yaxis = F)
+
+  # set ranges of features
+  trackViewer::lolliplot(SNP.gr, features,plotRange,
+                         type = type, jitter = NULL,
+                         cex = cex,
+                         ylab = "", yaxis = F)
 }
 

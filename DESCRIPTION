@@ -1,7 +1,7 @@
 Package: quickHapR
 Type: Package
 Title: R Packages for Gene Haplotype Analysis
-Version: 0.02.220510
+Version: 0.02.220510.1
 Author: ZhangRenliang
 Maintainer: ZhangRenliang <zhang_renliang@163.com>
 Description: A quick hap analysis R packages, depends on vcf files and phenos.
@@ -23,6 +23,5 @@ Imports:
   IRanges,
   rlang
 Depends:  
-  ggplot2,
-  R(>= 4.0.1)
+  ggplot2
 License: GPL-3

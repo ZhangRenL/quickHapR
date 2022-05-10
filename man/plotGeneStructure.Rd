@@ -4,7 +4,11 @@
 \alias{plotGeneStructure}
 \title{plotGeneStructure}
 \usage{
-plotGeneStructure(gff, hapResult, Chr, startPOS, endPOS)
+plotGeneStructure(gff, hapResult,
+Chr,
+startPOS, endPOS,
+type = "pin", cex = 1,
+CDS_h = 0.05, fiveUTR_h = 0.02, threeUTR_h = 0.01)
 }
 \arguments{
 \item{gff}{gff}
@@ -17,6 +21,12 @@ with 4 metarows: Chr, POS, Allele and ANN, and each genotype of each hap}
 \item{startPOS}{startPOS, it will use the min position in the second meta rows by defalt}
 
 \item{endPOS}{endPOS, it will use the max position in the second meta rows by defalt}
+
+\item{type}{character. Could be circle, pie, pin, pie.stack or flag}
+
+\item{cex}{cex will control the size of circle.}
+
+\item{CDS_h, fiveUTR_h, threeUTR_h}{The height of CDS 5'UTR and 3'UTR}
 }
 \description{
 plotGeneStructure

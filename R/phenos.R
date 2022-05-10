@@ -6,13 +6,14 @@
 #'                   hapPrefix = "H",
 #'                   geneID = "Seita.1G000000",
 #'                   mergeFigs = T,
-#'                   minPhenoNumber = 5)
+#'                   minAcc = 5)
 #' @param hap hap
 #' @param pheno pheno
 #' @param phenoName pheno name
 #' @param hapPrefix hap  prefix
-#' @param  geneID gene ID forplot title
-#' @param mergeFigs merge heatmapand box plot ornot
+#' @param geneID gene ID for plot title
+#' @param mergeFigs merge heatmap and box plot or not
+#' @param minAcc If observations numberof a Hap less than this number will not be compared with others or ploted
 #' @importFrom stats na.omit t.test
 #' @importFrom rlang .data
 #' @export
@@ -22,7 +23,7 @@ hapVsPheno <- function(hap,
                        hapPrefix = "H",
                        geneID = "Seita.1G000000",
                        mergeFigs = T,
-                       minPhenoNumber = 5){
+                       minAcc = 5){
   if(missing(phenoName)) warning("phenoName is null, will use the first pheno")
   if(!(phenoName %in% colnames(pheno))) stop("Could not find ", phenoName, " in colnames of pheno")
   result <- list()
@@ -38,8 +39,8 @@ hapVsPheno <- function(hap,
   hps <- table(phenop$Hap)
 
   # filter Haps for plot
-  if(max(hps) < minPhenoNumber) stop("there is no haps to plot (no Haps with observations more than ",minPhenoNumber)
-  hps <- hps[hps >= minPhenoNumber]
+  if(max(hps) < minAcc) stop("there is no haps to plot (no Haps with observations more than ",minAcc)
+  hps <- hps[hps >= minAcc]
 
   hpsnm <- names(hps)
   hps <- paste0(names(hps),"(",hps,")")
@@ -58,7 +59,7 @@ hapVsPheno <- function(hap,
       j <- hpsnm[n]
       hapi <- phenop[phenop$Hap == i, phenoName]
       hapj <- phenop[phenop$Hap == j, phenoName]
-      if (length(hapi) >= minPhenoNumber & length(hapj) >= minPhenoNumber) {
+      if (length(hapi) >= minAcc & length(hapj) >= minAcc) {
         pvalue <- try(t.test(hapi,hapj)$p.value,silent = T)
 
         T.Result[j, i] <- ifelse(is.numeric(pvalue) & !is.na(pvalue) ,pvalue,1)
@@ -71,7 +72,7 @@ hapVsPheno <- function(hap,
   result$plotHap <- plotHap
   result$T.Result <- T.Result
   plotHap <- unique(plotHap)
-  if(is.null(plotHap)) stop("there is no haps to plot (no Haps with observations more than ",minPhenoNumber)
+  if(is.null(plotHap)) stop("there is no haps to plot (no Haps with observations more than ",minAcc)
   if(length(plotHap) > 1){
     T.Result <- T.Result[!is.na(T.Result[, 1]), !is.na(T.Result[1, ])]
 
