@@ -140,9 +140,10 @@ plotGeneStructure <- function(gff, hapResult,
 
 
   # set plot ranges
-  plotRange <- GenomicRanges::GRanges(Chr,
+  gene <- GenomicRanges::GRanges(Chr,
                  IRanges::IRanges(start = min(startPOS,endPOS),
                          end = max(startPOS,endPOS)))
+
   over <- gff[gff %over% gene]
   over$height[over$type == "CDS"] <- CDS_h
   over$height[over$type == "three_prime_UTR"] <- threeUTR_h
@@ -163,7 +164,7 @@ plotGeneStructure <- function(gff, hapResult,
 
 
   # set ranges of features
-  trackViewer::lolliplot(SNP.gr, features,plotRange,
+  trackViewer::lolliplot(SNP.gr, features, gene,
                          type = type, jitter = NULL,
                          cex = cex,
                          ylab = "", yaxis = F)
