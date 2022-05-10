@@ -111,6 +111,7 @@ get_hap <- function(vcf,
     hap[hap == i] <- stringr::str_sub(i,1,1)
   }
 
+  hap
   # name haps
   hap <- data.frame(hap, check.rows = F, check.names = F)
   HapID <- tidyr::unite(hap, dplyr::matches("[0-9]{1,}"),col = "IDs", sep = "")
@@ -133,6 +134,19 @@ get_hap <- function(vcf,
   colnames(meta) <- colnames(hap)
   hap <- rbind(meta, hap)
   rownames(hap) <- c(1:nrow(hap))
+
+  # removed Redundancy cols
+  removecols = c()
+  for(c in 1:ncol(hap)){
+    namec = colnames(hap)[c]
+    if(!(namec %in% c("Hap", "Accession", "freq"))){
+      gtc = unique(hap[-c(1:4),c])
+      if(length(gtc) == 1) {
+        removecols = c(removecols, c)
+      }
+    }
+  }
+  if(!is.null(removecols)) hap = hap[, -removecols]
   return(hap)
 }
 
