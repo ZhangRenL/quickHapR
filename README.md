@@ -1,6 +1,6 @@
 # quickHapR
 
-#### 介绍
+## 介绍
 
 **通过vcf文件对基因进行单倍型分析**
 
@@ -9,14 +9,14 @@
 2. 结合表型数据筛选出优异单倍型进行后续研究
    [quickHapR](https://gitee.com/zhangrenl/quickHapR)
 
-### 基本逻辑
+## 基本逻辑
 
 1. 导入数据（vcf数据，GFF注释，表型数据）
 2. 通过vcf文件计算单倍型，导出单倍型数据
 3. 单倍型数据结合注释信息将变异位点标注在基因示意图上；展示各单倍型之间的进化关系
 4. 比较不同单倍型之间的表型差异，筛选优势单倍型
 
-#### 安装教程
+## 安装教程
 
 **安装准备**
 
@@ -35,43 +35,7 @@ devtools::install_git("https://gitee.com/zhangrenl/quickhapr")
 
   `rtracklayer`, `trackViewer`, `GenomicRanges`, `IRanges`
 
-#### 使用说明
-
-```R
-# 加载quickhapR
-library(quickHapR)
-
-# 设定工作目录
-setwd("/your/working/directory")
-
-# 导入数据
-vcf = import_vcf("Seita.1G001600_136756_144094_-_3k_final.vcf.gz")
-gff = import_gff("Yugu1.gff3")
-phenos = import_pheno("allPheno.txt")
-
-# 计算并输出单倍型结果
-hap = get_hap(vcf,                 # vcf imported by import_vcf()
-              filter_Chr = F,      # Filter vcf by Chrom or not,defalt is false.
-              Chr = "scaffold_1",  # Needed if filter_Chr is TRUE.
-              filter_POS = T,      # Filter vcf by Position or not, defalt is TRUE
-              startPOS = 136756,   # Numeric, start postion. Needed if filter_POS is TRUE.
-              endPOS = 144094)     # Numeric, end position. Needed if filter_POS is TRUE.
-hapResult = hap_result(hap,        # hap produced by get_hap()
-                       out =T,     # Write the results or not, defalt is TRUE and file is needed
-                       file = "results/Seita.1G001600_hapResult.txt") 
-  
-# 可视化单倍型结果
-plotGeneStructure(gff, hapResult)
-plotHapTable(hapResult = hapResult)
-
-# 单倍型与表型的关联分析
-hapVsPheno(hap, phenos, phenoName = colnames(phenos)[1], hapPrefix = "H",geneID = "Seita.1G001600")
-
-```
-
-
-
-
+## 使用说明
 
 #### 
 
