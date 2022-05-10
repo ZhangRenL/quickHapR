@@ -18,7 +18,6 @@ Imports:
 Depends:  
   vcfR,
   ggplot2,
-  stringr, 
   randomcoloR,
   rtracklayer, 
   trackViewer,
