@@ -1,6 +1,12 @@
 #' @name hapVsPheno
 #' @title hapVsPheno
-#' @usage hapVsPheno(hap, pheno,phenoName,hapPrefix = "H", geneID = "Seita.1G000000", mergeFigs = T, minPhenoNumber = 5)
+#' @usage hapVsPheno(hap,
+#'                   pheno,
+#'                   phenoName,
+#'                   hapPrefix = "H",
+#'                   geneID = "Seita.1G000000",
+#'                   mergeFigs = T,
+#'                   minPhenoNumber = 5)
 #' @param hap hap
 #' @param pheno pheno
 #' @param phenoName pheno name

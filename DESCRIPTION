@@ -14,12 +14,6 @@ Imports:
   reshape2, 
   ggpubr, 
   stringr, 
-  randomcoloR,
-  rtracklayer, 
-  trackViewer,
-  magrittr,
-  GenomicRanges,
-  IRanges,
   rlang
 Depends:  
   vcfR,
