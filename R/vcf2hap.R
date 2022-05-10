@@ -91,6 +91,9 @@ get_hap <- function(vcf,
     }
   }
 
+  hap <- t(hap)
+
+
   # deal with heterozygosis site set as "H"
   probe_hyb <- c("AA","CC","GG","TT","++","--")
   hap[!(hap %in% probe_hyb)] <- "H"
@@ -100,7 +103,6 @@ get_hap <- function(vcf,
   }
 
   # drop na rows
-  hap <- t(hap)
   hap[hap == "."] <- NA
   if(na.drop) hap <- na.omit(hap)
 
@@ -111,9 +113,10 @@ get_hap <- function(vcf,
     hap[hap == i] <- stringr::str_sub(i,1,1)
   }
 
-  hap
+
   # name haps
   hap <- data.frame(hap, check.rows = F, check.names = F)
+
   HapID <- tidyr::unite(hap, dplyr::matches("[0-9]{1,}"),col = "IDs", sep = "")
   HapID <- HapID$IDs
   hap <- cbind(Hap = HapID, hap)
@@ -134,6 +137,7 @@ get_hap <- function(vcf,
   colnames(meta) <- colnames(hap)
   hap <- rbind(meta, hap)
   rownames(hap) <- c(1:nrow(hap))
+
 
   # removed Redundancy cols
   removecols = c()

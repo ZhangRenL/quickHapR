@@ -24,5 +24,7 @@ Depends:
   magrittr,
   GenomicRanges,
   IRanges,
-  R(>= 4.0.1)
+  R(>= 4.0.1),
+  BiocManager
+  
 License: GPL-3
