@@ -1,10 +1,15 @@
 #' @name get_hap
 #' @title generat haps from vcf
 #' @description  generate hap format from vcf
-#' @usage get_hap(vcf, hap_prefix = "H",
-#' filter_Chr = F, Chr = "scaffold_1",
-#' filter_POS = F, startPOS = as.numeric(), endPOS = as.numeric(),
-#' hyb_remove = T, na.drop = T)
+#' @usage get_hap(vcf,
+#' hap_prefix = "H",
+#' filter_Chr = FALSE,
+#' Chr = "scaffold_1",
+#' filter_POS = FALSE,
+#' startPOS = as.numeric(),
+#' endPOS = as.numeric(),
+#' hyb_remove = TRUE,
+#' na.drop = TRUE)
 #' @author Zhangrenl
 #' @description  import vcf file
 #' @import tidyr
@@ -13,160 +18,183 @@
 #' @importFrom rlang .data
 #' @importFrom  stats na.omit
 #' @param vcf vcf
-#' @param filter_Chr filter vcf by Chrome or not, defalt is FALSE. If TRUE, the Chr is needed.
-#' @param filter_POS filter vcf by Position or not, defalt is FALSE. If TRUE, startPOS and endPOS are needed.
+#' @param filter_Chr filter vcf by Chrome or not, defalt is FALSE.
+#'  If TRUE, the Chr is needed.
+#' @param filter_POS filter vcf by Position or not, defalt is FALSE.
+#'  If TRUE, startPOS and endPOS are needed.
 #' @param hap_prefix hap_prefix, defalt is "H"
-#' @param hyb_remove Remove accessions contains hybrid site or not. Defalt is TRUE.
-#' @param na.drop Drop Accessions contains unknown allele site or note. Defalt is TRUE
+#' @param hyb_remove Remove accessions contains hybrid site or not.
+#' Defalt is TRUE.
+#' @param na.drop Drop Accessions contains unknown allele site or note.
+#' Defalt is TRUE
 #' @param Chr Needed for filter vcf by Chrom
-#' @param startPOS,endPOS Needed for filter vcf by position. startPOS must less than endPOS
+#' @param startPOS,endPOS Needed for filter vcf by position.
+#' startPOS must less than endPOS
 #' @export
-get_hap <- function(vcf,
-                    hap_prefix = "H",
-                    filter_Chr = F, Chr = "scaffold_1",
-                    filter_POS = F, startPOS = as.numeric(), endPOS = as.numeric(),
-                    hyb_remove = T,
-                    na.drop = T) {
-  # to do: add a filter_vcf function
-  # for choose promoter, gene, downstream range for haplotyoe analysis
-  requireNamespace('tidyr')
-  requireNamespace('dplyr')
-  if(filter_Chr){
-    if(missing(Chr)) stop("Chr must be character")
-    vcfChr <- vcf@fix[,1]
-    probe <- vcfChr %in% Chr
-    vcf@fix <- vcf@fix[probe,]
-    vcf@gt <- vcf@gt[probe,]
-  }
-
-  # filter Postion according given range
-  if(filter_POS){
-    if(missing(startPOS)) stop("startPOS must be numeric")
-    if(missing(endPOS)) stop("endPOS must be numeric")
-    if(startPOS >= endPOS) stop("startPOS must less tan endPOS")
-    vcfPOS <- as.numeric(vcf@fix[,2])
-    probe <- c(vcfPOS >= startPOS & vcfPOS <= endPOS)
-
-    #
-    if(!(TRUE %in% probe)) {
-      e = paste0("There is no variant in selected range. \nPlease check vcf file between ",
-                 startPOS," and ", endPOS, ".")
-      return(e)
+get_hap <- function(
+    vcf,
+    hap_prefix = "H",
+    filter_Chr = FALSE,
+    Chr = "scaffold_1",
+    filter_POS = FALSE,
+    startPOS = as.numeric(),
+    endPOS = as.numeric(),
+    hyb_remove = TRUE,
+    na.drop = TRUE) {
+    # to do: add a filter_vcf function
+    # for choose promoter, gene, downstream range for haplotyoe analysis
+    requireNamespace('tidyr')
+    requireNamespace('dplyr')
+    if(filter_Chr){
+        if(missing(Chr)) stop("Chr must be character")
+        vcfChr <- vcf@fix[,1]
+        probe <- vcfChr %in% Chr
+        vcf@fix <- vcf@fix[probe,]
+        vcf@gt <- vcf@gt[probe,]
     }
-    vcf@fix <- vcf@fix[probe,]
-    vcf@gt <- vcf@gt[probe,]
-  }
 
-  # vcf2data.frame for analysis
-  gt <- vcfR::extract_gt_tidy(vcf)
-  CHR <- vcfR::getCHROM(vcf)
-  POS <- vcfR::getPOS(vcf)
-  REF <- vcfR::getREF(vcf)
-  ALT <- vcfR::getALT(vcf)
-  ALLELE <- paste0(REF,"/",ALT)
-  INFO <- vcfR::getINFO(vcf)
-  hap <- tidyr::pivot_wider(data = gt,
-                           id_cols = .data$Key,
-                           names_from = .data$Indiv,
-                           values_from = .data$gt_GT_alleles)
-  hap <- dplyr::select(hap, -c(.data$Key))
-  hap <- as.matrix(hap)
-  rownames(hap) <- POS
+    # filter Postion according given range
+    if(filter_POS){
+        if(missing(startPOS)) stop("startPOS must be numeric")
+        if(missing(endPOS)) stop("endPOS must be numeric")
+        if(startPOS >= endPOS) stop("startPOS must less tan endPOS")
+        vcfPOS <- as.numeric(vcf@fix[,2])
+        probe <- c(vcfPOS >= startPOS & vcfPOS <= endPOS)
 
-  # convert "." into "N/N"
-  hap[hap == "."] <- "N/N"
-
-  # convert Indel into +/-
-  for(l in 1:nrow(hap)){
-    if(stringr::str_length(ALLELE[l]) > 3){
-      if(stringr::str_length(REF[l]) > stringr::str_length(ALT[l])){
-        gety <- c("++", "+-","-+","--","NN")
-      } else {
-        gety <- c("--", "-+","+-","++","NN")
-      }
-      REFl <- REF[l]
-      ALTl <- ALT[l]
-      names(gety) <- paste(c(REFl,REFl,ALTl,ALTl,"N"),c(REFl,ALTl,REFl,ALTl,"N"),sep = "/")
-      probe <- hap[l,]
-      hap[l,] <- gety[probe]
-    } else {
-      hap[l,] <- stringr::str_remove_all(hap[l,], "[/]")
+        #
+        if(!(TRUE %in% probe)) {
+            e = paste0(
+                "There is no variant in selected range.
+                Please check vcf file between ",
+                startPOS," and ", endPOS, ".")
+            return(e)
+        }
+        vcf@fix <- vcf@fix[probe,]
+        vcf@gt <- vcf@gt[probe,]
     }
-  }
 
-  hap <- t(hap)
+    # vcf2data.frame for analysis
+    gt <- vcfR::extract_gt_tidy(vcf)
+    CHR <- vcfR::getCHROM(vcf)
+    POS <- vcfR::getPOS(vcf)
+    REF <- vcfR::getREF(vcf)
+    ALT <- vcfR::getALT(vcf)
+    ALLELE <- paste0(REF,"/",ALT)
+    INFO <- vcfR::getINFO(vcf)
+    hap <- tidyr::pivot_wider(
+        data = gt,
+        id_cols = .data$Key,
+        names_from = .data$Indiv,
+        values_from = .data$gt_GT_alleles)
+    hap <- dplyr::select(hap, -c(.data$Key))
+    hap <- as.matrix(hap)
+    rownames(hap) <- POS
 
+    # convert "." into "N/N"
+    hap[hap == "."] <- "N/N"
 
-  # reform the genotypes
-  # +/-,-/+ ->H
-  # A/G,A/T,A/C -> H
-  # C/A,C/G,C/T -> H
-  # G/A,G/T,G/A -> H
-  # T/A,T/G,T/C -> H
-  # ++ -> +; -- -> -
-  # A/A -> A; T/T ->T; C/C -> C; G/G ->G
-  # N/N -> N
-  probe_hyb <- c("AA","CC","GG","TT","++","--")
-  hap[!(hap %in% probe_hyb)] <- "H"
-
-  for(i in probe_hyb) {
-    hap[hap == i] <- stringr::str_sub(i,1,1)
-  }
-
-  hap[hap == "NN"] <- NA
-
-
-  # Drop hyb
-  if(hyb_remove) {
-    hap[hap == "H"] <- NA
-    hap <- na.omit(hap)
-  }
-
-  # Drop N
-  if(na.drop) {
-    hap[hap == "N"] <- NA
-    hap <- na.omit(hap)
-  }
-
-
-  # name haps
-  hap <- data.frame(hap, check.rows = F, check.names = F)
-
-  HapID <- tidyr::unite(hap, dplyr::matches("[0-9]{1,}"),col = "IDs", sep = "")
-  HapID <- HapID$IDs
-  hap <- cbind(Hap = HapID, hap)
-  hap$Accession <- row.names(hap)
-  haps <- table(hap$Hap)
-  haps = haps[order(haps,decreasing = T)]
-  hapnms <- stringr::str_pad(c(1:length(haps)),3,"left","0")
-  hapnms <- paste0(hap_prefix, hapnms)
-  names(hapnms) <- names(haps)
-  hap$Hap <- hapnms[hap$Hap]
-  hap <- hap[order(hap$Hap),]
-
-  # add infos
-  meta <- rbind(c("CHR",CHR,""),
-               c("POS",POS,""),
-               c("INFO", INFO,""),
-               c("ALLELE",ALLELE,""))
-  colnames(meta) <- colnames(hap)
-  hap <- rbind(meta, hap)
-  rownames(hap) <- c(1:nrow(hap))
-
-
-  # removed Redundancy cols
-  removecols = c()
-  for(c in 1:ncol(hap)){
-    namec = colnames(hap)[c]
-    if(!(namec %in% c("Hap", "Accession", "freq"))){
-      gtc = unique(hap[-c(1:4),c])
-      if(length(gtc) == 1) {
-        removecols = c(removecols, c)
-      }
+    # convert Indel into +/-
+    nr = nrow(hap)
+    for(l in seq_len(nr)){
+        if(stringr::str_length(ALLELE[l]) > 3){
+            if(stringr::str_length(REF[l]) > stringr::str_length(ALT[l])){
+                gety <- c("++", "+-","-+","--","NN")
+            } else {
+                gety <- c("--", "-+","+-","++","NN")
+            }
+            REFl <- REF[l]
+            ALTl <- ALT[l]
+            names(gety) <- paste(
+                c(REFl,REFl,ALTl,ALTl,"N"),
+                c(REFl,ALTl,REFl,ALTl,"N"),
+                sep = "/")
+            probe <- hap[l,]
+            hap[l,] <- gety[probe]
+        } else {
+            hap[l,] <- stringr::str_remove_all(hap[l,], "[/]")
+        }
     }
-  }
-  if(!is.null(removecols)) hap = hap[, -removecols]
-  return(hap)
+
+    hap <- t(hap)
+
+
+    # reform the genotypes
+    # +/-,-/+ ->H
+    # A/G,A/T,A/C -> H
+    # C/A,C/G,C/T -> H
+    # G/A,G/T,G/A -> H
+    # T/A,T/G,T/C -> H
+    # ++ -> +; -- -> -
+    # A/A -> A; T/T ->T; C/C -> C; G/G ->G
+    # N/N -> N
+    probe_hyb <- c("AA","CC","GG","TT","++","--")
+    hap[!(hap %in% probe_hyb)] <- "H"
+
+    for(i in probe_hyb) {
+        hap[hap == i] <- stringr::str_sub(i,1,1)
+    }
+
+    hap[hap == "NN"] <- NA
+
+
+    # Drop hyb
+    if(hyb_remove) {
+        hap[hap == "H"] <- NA
+        hap <- na.omit(hap)
+    }
+
+    # Drop N
+    if(na.drop) {
+        hap[hap == "N"] <- NA
+        hap <- na.omit(hap)
+    }
+
+
+    # name haps
+    hap <- data.frame(hap, check.rows = FALSE, check.names = FALSE)
+
+    HapID <- tidyr::unite(
+        hap,
+        dplyr::matches("[0-9]{1,}"),
+        col = "IDs",
+        sep = "")
+    HapID <- HapID$IDs
+    hap <- cbind(Hap = HapID, hap)
+    hap$Accession <- row.names(hap)
+    haps <- table(hap$Hap)
+    haps <- haps[order(haps,decreasing = TRUE)]
+    n_hs <- length(haps)
+    hapnms <- stringr::str_pad(seq_len(n_hs),3,"left","0")
+    hapnms <- paste0(hap_prefix, hapnms)
+    names(hapnms) <- names(haps)
+    hap$Hap <- hapnms[hap$Hap]
+    hap <- hap[order(hap$Hap),]
+
+    # add infos
+    meta <- rbind(
+        c("CHR",CHR,""),
+        c("POS",POS,""),
+        c("INFO", INFO,""),
+        c("ALLELE",ALLELE,""))
+    colnames(meta) <- colnames(hap)
+    hap <- rbind(meta, hap)
+    rownames(hap) <- seq_len(nrow(hap))
+
+
+    # removed Redundancy cols
+    removecols <- c()
+    nc_hap <- ncol(hap)
+    for(c in seq_len(nc_hap)){
+        namec <- colnames(hap)[c]
+        if(!(namec %in% c("Hap", "Accession", "freq"))){
+            gtc <- unique(hap[-c(1, 2, 3, 4),c])
+            if(length(gtc) == 1) {
+                removecols <- c(removecols, c)
+            }
+        }
+    }
+    if(!is.null(removecols)) hap <- hap[, -removecols]
+    return(hap)
 }
 
 
@@ -179,17 +207,29 @@ get_hap <- function(vcf,
 #' @param out write hap results to a txt file
 #' @param file file path
 #' @export
-hap_result <- function(hap, out = T, file = "hapResult.txt"){
-  requireNamespace('tidyr')
-  hapResults <- hap %>% data.frame(check.names = F)
-  hapfre <- table(hapResults[,1])
-  hapfre <- hapfre[stringr::str_starts(names(hapfre),"H")]
-  hapResults <- hapResults %>% tidyr::chop(cols = "Accession")
-  hapResults$freq[5:nrow(hapResults)] <- hapfre[hapResults[5:nrow(hapResults),1]]
-  Acc <- c()
-  for(i in 1:length(hapResults$Accession))  Acc[i] <- paste(hapResults$Accession[[i]],collapse = ";")
-  hapResults$Accession <- Acc
+hap_result <- function(hap, out = TRUE, file = "hapResult.txt"){
+    requireNamespace('tidyr')
+    hapResults <- hap %>% data.frame(check.names = FALSE)
+    hapfre <- table(hapResults[,1])
+    hapfre <- hapfre[stringr::str_starts(names(hapfre),"H")]
+    hapResults <- hapResults %>% tidyr::chop(cols = "Accession")
+    prob = hapResults[5:nrow(hapResults),1]
+    hapResults$freq[5:nrow(hapResults)] <- hapfre[prob]
+    Acc <- c()
+    nAcc = length(hapResults$Accession)
+    for(i in seq_len(nAcc)) {
+        Acc[i] <- paste(hapResults$Accession[[i]],collapse = ";")
+    }
+    hapResults$Accession <- Acc
 
-  if(out)  utils::write.table(hapResults, file = file, sep = "\t",quote = F,row.names = F,col.names = F)
-  return(hapResults)
+    if(out)  {
+        utils::write.table(
+            hapResults,
+            file = file,
+            sep = "\t",
+            quote = FALSE,
+            row.names = FALSE,
+            col.names = FALSE)
+        }
+    return(hapResults)
 }

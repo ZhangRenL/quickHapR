@@ -18,9 +18,11 @@ with 4 metarows: Chr, POS, Allele and ANN, and each genotype of each hap}
 
 \item{Chr}{Chr, it will use the first Chr in the meta rows by defalt}
 
-\item{startPOS}{startPOS, it will use the min position in the second meta rows by defalt}
+\item{startPOS}{If missing, will use the min position
+in the second meta rows by defalt}
 
-\item{endPOS}{endPOS, it will use the max position in the second meta rows by defalt}
+\item{endPOS}{If missing, will use the max position
+in the second meta rows by defalt}
 
 \item{type}{character. Could be circle, pie, pin, pie.stack or flag}
 

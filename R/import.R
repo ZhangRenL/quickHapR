@@ -10,8 +10,8 @@
 #' @usage import_vcf(vcf_file = vcf_file, ...)
 #' @export
 import_vcf <- function(vcf_file = vcf_file, ...) {
-  vcf <- vcfR::read.vcfR(vcf_file, ...)
-  return(vcf)
+    vcf <- vcfR::read.vcfR(vcf_file, ...)
+    return(vcf)
 }
 
 
@@ -27,11 +27,11 @@ import_vcf <- function(vcf_file = vcf_file, ...) {
 #' @param ... parameters will pass to read.delim
 #' @export
 import_pheno <- function(phenoFile, comment.char = "#", ...){
-  phenos <- utils::read.delim(phenoFile,
-                             check.names = F,
-                             row.names = 1,
-                             comment.char = comment.char, ...)
-  return(phenos)
+    phenos <- utils::read.delim(phenoFile,
+                                check.names = FALSE,
+                                row.names = 1,
+                                comment.char = comment.char, ...)
+    return(phenos)
 }
 
 
@@ -42,8 +42,8 @@ import_pheno <- function(phenoFile, comment.char = "#", ...){
 #' @param gffFile gffFile
 #' @export
 import_gff <- function(gffFile){
-  gff <- rtracklayer::import(gffFile)
-  return(gff)
+    gff <- rtracklayer::import(gffFile)
+    return(gff)
 }
 
 
@@ -59,7 +59,4 @@ import_gff <- function(gffFile){
 #' @importFrom magrittr %>%
 #' @usage lhs \%>\% rhs
 NULL
-
-
-
 

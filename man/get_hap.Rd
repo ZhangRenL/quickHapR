@@ -14,17 +14,22 @@ hyb_remove = T, na.drop = T)
 
 \item{hap_prefix}{hap_prefix, defalt is "H"}
 
-\item{filter_Chr}{filter vcf by Chrome or not, defalt is FALSE. If TRUE, the Chr is needed.}
+\item{filter_Chr}{filter vcf by Chrome or not, defalt is FALSE.
+If TRUE, the Chr is needed.}
 
 \item{Chr}{Needed for filter vcf by Chrom}
 
-\item{filter_POS}{filter vcf by Position or not, defalt is FALSE. If TRUE, startPOS and endPOS are needed.}
+\item{filter_POS}{filter vcf by Position or not, defalt is FALSE.
+If TRUE, startPOS and endPOS are needed.}
 
-\item{startPOS, endPOS}{Needed for filter vcf by position. startPOS must less than endPOS}
+\item{startPOS, endPOS}{Needed for filter vcf by position.
+startPOS must less than endPOS}
 
-\item{hyb_remove}{Remove accessions contains hybrid site or not. Defalt is TRUE.}
+\item{hyb_remove}{Remove accessions contains hybrid site or not.
+Defalt is TRUE.}
 
-\item{na.drop}{Drop Accessions contains unknown allele site or note. Defalt is TRUE}
+\item{na.drop}{Drop Accessions contains unknown allele site or note.
+Defalt is TRUE}
 }
 \description{
 generate hap format from vcf

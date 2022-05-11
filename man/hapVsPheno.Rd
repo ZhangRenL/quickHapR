@@ -5,12 +5,11 @@
 \title{hapVsPheno}
 \usage{
 hapVsPheno(hap,
-                  pheno,
-                  phenoName,
-                  hapPrefix = "H",
-                  geneID = "Seita.1G000000",
-                  mergeFigs = T,
-                  minAcc = 5)
+pheno,
+phenoName,hapPrefix = "H",
+geneID = "Seita.1G000000",
+mergeFigs = TRUE,
+minAcc = 5)
 }
 \arguments{
 \item{hap}{hap}
@@ -25,7 +24,8 @@ hapVsPheno(hap,
 
 \item{mergeFigs}{merge heatmap and box plot or not}
 
-\item{minAcc}{If observations numberof a Hap less than this number will not be compared with others or ploted}
+\item{minAcc}{If observations numberof a Hap less than this number will
+not be compared with others or ploted}
 }
 \description{
 hapVsPheno
