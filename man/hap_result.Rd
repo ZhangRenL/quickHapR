@@ -4,7 +4,7 @@
 \alias{hap_result}
 \title{generate hap results}
 \usage{
-hap_result(hap, out = T, file = "hapResult.txt")
+hap_result(hap, out = TRUE, file = "hapResult.txt")
 }
 \arguments{
 \item{hap}{hap}
@@ -13,6 +13,18 @@ hap_result(hap, out = T, file = "hapResult.txt")
 
 \item{file}{file path}
 }
+\value{
+data.frame, first four rows are fixed to meta information: CHR, POS, INFO, ALLELE
+Hap names were placed in col1, Accessions and freqs were placed at the last two cols.
+}
 \description{
 summarize hap result and output a txt file
+}
+\examples{
+
+data("quickHap_test")
+# You can import your vcf data by `import_vcf()` here
+hap <- get_hap(vcf, hyb_remove = TRUE, na.drop =TRUE)
+hapResult <- hap_result(hap)
+plotHapTable(hapResult)
 }

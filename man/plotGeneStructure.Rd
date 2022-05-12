@@ -7,7 +7,7 @@
 plotGeneStructure(gff, hapResult,
 Chr,
 startPOS, endPOS,
-type = "pin", cex = 1,
+type = "pin", cex = 0.7,
 CDS_h = 0.05, fiveUTR_h = 0.02, threeUTR_h = 0.01)
 }
 \arguments{
@@ -18,9 +18,11 @@ with 4 metarows: Chr, POS, Allele and ANN, and each genotype of each hap}
 
 \item{Chr}{Chr, it will use the first Chr in the meta rows by defalt}
 
-\item{startPOS}{startPOS, it will use the min position in the second meta rows by defalt}
+\item{startPOS}{If missing, will use the min position
+in the second meta rows by defalt}
 
-\item{endPOS}{endPOS, it will use the max position in the second meta rows by defalt}
+\item{endPOS}{If missing, will use the max position
+in the second meta rows by defalt}
 
 \item{type}{character. Could be circle, pie, pin, pie.stack or flag}
 
@@ -30,4 +32,14 @@ with 4 metarows: Chr, POS, Allele and ANN, and each genotype of each hap}
 }
 \description{
 plotGeneStructure
+}
+\examples{
+
+data("quickHap_test")
+hap <- get_hap(vcf,hyb_remove = TRUE, na.drop = TRUE)
+hapResult <- hap_result(hap)
+plotGeneStructure(gff, hapResult,
+                  startPOS = 4100,
+                  endPOS = 8210,
+                  cex = 0.75)
 }

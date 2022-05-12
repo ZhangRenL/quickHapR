@@ -13,10 +13,20 @@ import_vcf(vcf_file = vcf_file, ...)
 
 \item{...}{pass to vcfR::read.vcfR}
 }
+\value{
+vcfR object
+}
 \description{
-read and import vcf file
-
 import vcf file
+}
+\examples{
+\dontrun{
+library(quickHapR)
+data("quickHap_test")
+vcfR::write.vcf(vcf, file = "test.vcf.gz")
+vcf <- import_vcf(file = "test.vcf.gz")
+unlink("test.vcf.gz")
+}
 }
 \author{
 Zhangrenl
