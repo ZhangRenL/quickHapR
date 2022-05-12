@@ -9,6 +9,7 @@ Authors@R: c(person(given = "Renliang", family = "Zhang", email = "zhang_renlian
   person(given = "Guanqing", family = "Jia", email = "jiaguanqing@caas.cn", role = c("aut")))
 Version: 0.99.01
 RoxygenNote: 7.1.2
+LazyData: True
 Imports: 
   tidyr,
   dplyr,
@@ -25,6 +26,12 @@ Imports:
   rlang,
   stats,
   utils
-Depends:  
-  ggplot2
+Depends: 
+  ggplot2,
+  R (>= 4.1.0)
 License: GPL-3
+Suggests: 
+    knitr,
+    rmarkdown
+VignetteBuilder: knitr
+

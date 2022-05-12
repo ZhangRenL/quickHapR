@@ -4,6 +4,13 @@
 #' hapPrefix = "H",
 #' geneID = "",
 #' title.color = "grey90")
+#' @description plot you hap result as a table
+#' @examples
+#'
+#' data("quickHap_test")
+#' hap <- get_hap(vcf,hyb_remove = TRUE, na.drop = TRUE)
+#' hapResult <- hap_result(hap)
+#' plotHapTable(hapResult)
 #' @importFrom randomcoloR randomColor
 #' @importFrom stringr str_starts
 #' @importFrom stringr str_length
@@ -14,6 +21,7 @@
 #' @param hapPrefix hapPrefix
 #' @param geneID geneID
 #' @export
+#' @return ggplot2 object.
 plotHapTable <- function(
     hapResult,
     hapPrefix = "H",
@@ -36,17 +44,24 @@ plotHapTable <- function(
     foot <- c()
     nfoot <- 1
     for(i in 2:length(ALLELE)){
-        if(stringr::str_length(ALLELE[i]) > 3){
+        ALi = ALLELE[i]
+        if(stringr::str_length(ALi) > 3){
             note <- paste0("*",nfoot,collapse = '')
             nfoot <- nfoot + 1
-            foot <- c(foot,paste0(note,": ", ALLELE[i]))
+            if(stringr::str_locate(ALi, "[/]")[1] == 2){
+                foot <- c(foot,paste0(note," (-/+):", ALLELE[i]))
+            } else {
+                foot <- c(foot,paste0(note," (+/-):", ALLELE[i]))
+            }
             lab[1,i] <- note
         }
     }
 
     lab <- reshape2::melt(lab,1)
-    replacement = c("AA"="A", "TT"="T","CC"="C","GG"="G","[+]{2}"="+","--"="-")
-    lab$value <- stringr::str_replace_all(lab$value, replacement)
+
+    # replacement = c("AA"="A", "TT"="T","CC"="C",
+    # "GG"="G","[+]{2}"="+","--"="-")
+    # lab$value <- stringr::str_replace_all(lab$value, replacement)
     meltHapRes$value[stringr::str_detect(meltHapRes$value,"[0-9]")] = NA
     levels <- as.vector(unique(meltHapRes$Var1))
     levels <- levels[order(levels, decreasing = TRUE)]
@@ -103,8 +118,17 @@ plotHapTable <- function(
 #' @usage plotGeneStructure(gff, hapResult,
 #' Chr,
 #' startPOS, endPOS,
-#' type = "pin", cex = 1,
+#' type = "pin", cex = 0.7,
 #' CDS_h = 0.05, fiveUTR_h = 0.02, threeUTR_h = 0.01)
+#' @examples
+#'
+#' data("quickHap_test")
+#' hap <- get_hap(vcf,hyb_remove = TRUE, na.drop = TRUE)
+#' hapResult <- hap_result(hap)
+#' plotGeneStructure(gff, hapResult,
+#'                   startPOS = 4100,
+#'                   endPOS = 8210,
+#'                   cex = 0.75)
 #' @importFrom trackViewer lolliplot
 #' @importFrom  GenomicRanges GRanges
 #' @importFrom  GenomicRanges strand
@@ -122,10 +146,11 @@ plotHapTable <- function(
 #' @param type character. Could be circle, pie, pin, pie.stack or flag
 #' @param CDS_h,fiveUTR_h,threeUTR_h The height of CDS 5'UTR and 3'UTR
 #' @export
+#' @return NULL
 plotGeneStructure <- function(
     gff, hapResult,
     Chr, startPOS, endPOS,
-    type = "pin", cex = 1,
+    type = "pin", cex = 0.7,
     CDS_h = 0.05,
     fiveUTR_h = 0.02,
     threeUTR_h = 0.01)

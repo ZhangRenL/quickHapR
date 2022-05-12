@@ -4,10 +4,15 @@
 \alias{get_hap}
 \title{generat haps from vcf}
 \usage{
-get_hap(vcf, hap_prefix = "H",
-filter_Chr = F, Chr = "scaffold_1",
-filter_POS = F, startPOS = as.numeric(), endPOS = as.numeric(),
-hyb_remove = T, na.drop = T)
+get_hap(vcf,
+hap_prefix = "H",
+filter_Chr = FALSE,
+Chr = "scaffold_1",
+filter_POS = FALSE,
+startPOS = 104,
+endPOS = 9889,
+hyb_remove = TRUE,
+na.drop = TRUE)
 }
 \arguments{
 \item{vcf}{vcf}
@@ -31,10 +36,20 @@ Defalt is TRUE.}
 \item{na.drop}{Drop Accessions contains unknown allele site or note.
 Defalt is TRUE}
 }
+\value{
+data.frame, first four rows are fixed to meta information: CHR, POS, INFO, ALLELE
+Hap names were placed in col1, Accessions were placed at the last col.
+}
 \description{
-generate hap format from vcf
+generate hap format from vcf.
+}
+\examples{
 
-import vcf file
+data("quickHap_test")
+# You can import your vcf data by `import_vcf()` here
+hap <- get_hap(vcf,hyb_remove = TRUE, na.drop =TRUE)
+hapResult <- hap_result(hap)
+plotHapTable(hapResult)
 }
 \author{
 Zhangrenl

@@ -7,7 +7,7 @@
 plotGeneStructure(gff, hapResult,
 Chr,
 startPOS, endPOS,
-type = "pin", cex = 1,
+type = "pin", cex = 0.7,
 CDS_h = 0.05, fiveUTR_h = 0.02, threeUTR_h = 0.01)
 }
 \arguments{
@@ -32,4 +32,14 @@ in the second meta rows by defalt}
 }
 \description{
 plotGeneStructure
+}
+\examples{
+
+data("quickHap_test")
+hap <- get_hap(vcf,hyb_remove = TRUE, na.drop = TRUE)
+hapResult <- hap_result(hap)
+plotGeneStructure(gff, hapResult,
+                  startPOS = 4100,
+                  endPOS = 8210,
+                  cex = 0.75)
 }

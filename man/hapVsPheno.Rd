@@ -7,7 +7,7 @@
 hapVsPheno(hap,
 pheno,
 phenoName,hapPrefix = "H",
-geneID = "Seita.1G000000",
+geneID = "test1G0387",
 mergeFigs = TRUE,
 minAcc = 5)
 }
@@ -27,6 +27,36 @@ minAcc = 5)
 \item{minAcc}{If observations numberof a Hap less than this number will
 not be compared with others or ploted}
 }
+\value{
+list. A list contains a character vector with Haps were applied
+student test, a mattrix contains p-value of each compare of Haps and a
+ggplot2 object named as figs if mergeFigs set as TRUE, or two ggplot2
+objects names as fig_pvalue and fig_Violin
+}
 \description{
 hapVsPheno
+}
+\examples{
+
+data("quickHap_test")
+hap <- get_hap(vcf,hyb_remove = TRUE, na.drop = TRUE)
+# plot the figs direactively
+hapVsPheno(hap = hap,pheno = pheno,phenoName = "GrainWeight.2021",minAcc = 3)
+
+#do not merge the files
+results <- hapVsPheno(hap = hap,
+                      pheno = pheno,
+                      phenoName = "GrainWeight.2021",
+                      minAcc = 3,
+                      mergeFigs = FALSE)
+plot(results$fig_pvalue)
+plot(results$fig_Violin)
+# plot multi figs in a `for` work folw
+pheno$GrainWeight.2022 = pheno$GrainWeight.2021 + c(1:nrow(pheno))
+for(i in colnames(pheno)){
+    results <- hapVsPheno(hap = hap,pheno = pheno,phenoName = i,minAcc = 3)
+    png(paste0(i,".png"))
+    plot(results$figs)
+dev.off()
+}
 }

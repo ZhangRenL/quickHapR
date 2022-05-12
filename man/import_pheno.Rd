@@ -13,8 +13,23 @@ import_pheno(phenoFile, comment.char = "#", ...)
 
 \item{...}{parameters will pass to read.delim}
 }
+\value{
+data.frame, Accession names were set as rownames and cols were
+named by pheno names
+}
 \description{
-第一列为Accession
-第二列起为表型，
-第一行为表头（表型名称）：“表型名称（计量单位）.地点[年份]”
+first col should be Accessions
+phenos should loacted begin second col，
+phenoName should at the first row,
+If "." located in pheno name, the former part of phenoName will be set as y axis name
+and the latter part will be set as foot of the fig.
+}
+\examples{
+\dontrun{
+library(quickHapR)
+data("quickHap_test")
+write.table(pheno, file = "test.pheno.txt", quote = FALSE, sep = "\t")
+pheno <- import_pheno("test.pheno.txt")
+unlink("test.pheno.txt")
+}
 }

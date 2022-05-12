@@ -1,0 +1,29 @@
+* using log directory '/home/zhangrenliang/Rproject/quickHapR/..Rcheck'
+* using R version 4.1.0 (2021-05-18)
+* using platform: x86_64-pc-linux-gnu (64-bit)
+* using session charset: ASCII
+* checking for file './DESCRIPTION' ... OK
+* checking extension type ... Package
+* this is package 'quickHapR' version '0.99.01'
+* package encoding: UTF-8
+* checking package namespace information ... OK
+* checking package dependencies ... OK
+* checking if this is a source package ... OK
+* checking if there is a namespace ... OK
+* checking for hidden files and directories ... NOTE
+Found the following hidden files and directories:
+  .Rhistory
+  .gitignore
+  vignettes/.gitignore
+  ..Rcheck
+  .Rproj.user
+  .git
+These were most likely included in error. See section 'Package
+structure' in the 'Writing R Extensions' manual.
+* checking for portable file names ... OK
+* checking for sufficient/correct file permissions ... OK
+* checking whether package 'quickHapR' can be installed ... [9s/0s] ERROR
+Installation failed.
+See '/home/zhangrenliang/Rproject/quickHapR/..Rcheck/00install.out' for details.
+* DONE
+Status: 1 ERROR, 1 NOTE

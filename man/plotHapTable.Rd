@@ -18,6 +18,16 @@ title.color = "grey90")
 
 \item{title.color}{title.color}
 }
+\value{
+ggplot2 object.
+}
 \description{
-plotHapTable
+plot you hap result as a table
+}
+\examples{
+
+data("quickHap_test")
+hap <- get_hap(vcf,hyb_remove = TRUE, na.drop = TRUE)
+hapResult <- hap_result(hap)
+plotHapTable(hapResult)
 }

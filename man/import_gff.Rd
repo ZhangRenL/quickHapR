@@ -4,11 +4,22 @@
 \alias{import_gff}
 \title{import_gff}
 \usage{
-import_gff(gffFile)
+import_gff(gffFile, format = "GFF")
 }
 \arguments{
-\item{gffFile}{gffFile}
+\item{gffFile}{gff file path}
+
+\item{format}{defalt as GFF}
+}
+\value{
+GRange object
 }
 \description{
 import_gff
+}
+\examples{
+\dontrun{
+    library(quickHapR)
+    gff <- import_gff("your.gff", format = "GFF")
+}
 }
