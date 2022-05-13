@@ -88,8 +88,8 @@ plotHapTable(hapResult,               # 单倍型结果
 
 # 单倍型与表型的关联分析
 res = hapVsPheno(hap,        # data.frame:第一列与最后一列分别固定为HAP和Accession，中间列为位置及对应的基因型
-                 pheno,      # data.frame: 第一列固定为Accession，随后各列为表型数据，phenoName作为colnames
-                 phenoName,  # 本次分析中使用的表型名称
+                 phenos,      # data.frame: 第一列固定为Accession，随后各列为表型数据，phenoName作为colnames
+                 phenoName = "yourPhenoName",  # 本次分析中使用的表型名称
                  hapPrefix = "H",            # 单倍型编号的前缀
                  geneID = "Seita.1G000000",  # 基因ID， 作为表头信息
                  mergeFigs = T,    # 是否将两图融合
