@@ -42,9 +42,11 @@ devtools::install_git("https://gitee.com/zhangrenl/quickhapr")
 ```R
 # 加载quickhapR
 library(quickHapR)
+data("quickHap_test") # 加载测试数据,处理自己的数据时不必执行该行
 
 # 设定工作目录
 setwd("/your/working/directory")
+
 
 # 导入数据
 vcf = import_vcf("Seita.1G001600_136756_144094_-_3k_final.vcf.gz")
@@ -92,6 +94,11 @@ res = hapVsPheno(hap,        # data.frame:第一列与最后一列分别固定�
                  geneID = "Seita.1G000000",  # 基因ID， 作为表头信息
                  mergeFigs = T,    # 是否将两图融合
                  minAcc = 5)       # 需要分析的单倍型包含的数据量最小值
+                 
+# plot(res$fig_pvalue)
+# plot(res$fig_Violin)
+
+plot(res$figs)
 ```
 
 
