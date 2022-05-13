@@ -21,7 +21,6 @@ import vcf file
 }
 \examples{
 \dontrun{
-library(quickHapR)
 data("quickHap_test")
 vcfR::write.vcf(vcf, file = "test.vcf.gz")
 vcf <- import_vcf(file = "test.vcf.gz")

@@ -65,13 +65,16 @@ install(c("ggpubr", "vcfR", "tidyverse", "stringr", "reshape2", "randomcoloR",
 library(quickHapR)
 data("quickHap_test")
 hap <- get_hap(vcf, hyb_remove = TRUE, na.drop = TRUE)
+hapResult <- hap_result(hap)
+plotHapTable(hapResult)
+plotHapTable(hapResult)
 hapVsPheno(hap = hap, pheno = pheno, phenoName = "GrainWeight.2021", minAcc = 3)
-results <- hapVsPheno(hap = hap,
+phenoResult <- hapVsPheno(hap = hap,
                       pheno = pheno,
                       phenoName = "GrainWeight.2021",
                       minAcc = 3,
                       mergeFigs = TRUE)
-plot(results$figs)
+plot(phenoResult$figs)
 ```
 
 ### 4.2 Software usage
@@ -123,7 +126,7 @@ plotHapTable(hapResult,               # haplotype result
              title.color = "grey90")  # header background color
 
 # Association analysis of haplotype and phenotype
-res = hapVsPheno(hap,        # data.frame: The first column and the last column are fixed as HAP and Accession respectively, and the middle column is the position and the corresponding genotype
+phenoResult = hapVsPheno(hap,        # data.frame: The first column and the last column are fixed as HAP and Accession respectively, and the middle column is the position and the corresponding genotype
                  phenos,     # data.frame: The first column is fixed as Accession, then each column is phenotype data, phenoName is used as colnames
                  phenoName = "yourPhenoName", # phenotype name used in this analysis
                  hapPrefix = "H",             # prefix of haplotype number
@@ -131,7 +134,7 @@ res = hapVsPheno(hap,        # data.frame: The first column and the last column 
                  mergeFigs = TRUE,    # Whether to merge the two images
                  minAcc = 5)          # The minimum amount of data contained in the haplotype to be analyzed
 
-# plot(res$fig_pvalue)
-# plot(res$fig_Violin)
-plot(res$figs)
+# plot(phenoResult$fig_pvalue)
+# plot(phenoResult$fig_Violin)
+plot(phenoResult$figs)
 ```

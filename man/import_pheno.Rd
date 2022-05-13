@@ -26,7 +26,6 @@ and the latter part will be set as foot of the fig.
 }
 \examples{
 \dontrun{
-library(quickHapR)
 data("quickHap_test")
 write.table(pheno, file = "test.pheno.txt", quote = FALSE, sep = "\t")
 pheno <- import_pheno("test.pheno.txt")

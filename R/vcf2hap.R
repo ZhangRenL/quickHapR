@@ -227,6 +227,7 @@ remove_redundancy_col <- function(hap){
 #' @name hap_result
 #' @title generate hap results
 #' @description summarize hap result and output a txt file
+#' @usage hap_result(hap, out = FALSE, file = "hapResult.txt")
 #' @examples
 #'
 #' data("quickHap_test")
@@ -242,7 +243,7 @@ remove_redundancy_col <- function(hap){
 #' @export
 #' @return data.frame, first four rows are fixed to meta information: CHR, POS, INFO, ALLELE
 #' Hap names were placed in col1, Accessions and freqs were placed at the last two cols.
-hap_result <- function(hap, out = TRUE, file = "hapResult.txt"){
+hap_result <- function(hap, out = FALSE, file = "hapResult.txt"){
     requireNamespace('tidyr')
     hapResults <- hap %>% data.frame(check.names = FALSE)
     hapfre <- table(hapResults[,1])

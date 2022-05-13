@@ -19,7 +19,6 @@ import_gff
 }
 \examples{
 \dontrun{
-    library(quickHapR)
     gff <- import_gff("your.gff", format = "GFF")
 }
 }

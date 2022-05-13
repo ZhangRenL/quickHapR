@@ -5,7 +5,6 @@
 #' @description  import vcf file
 #' @examples
 #' \dontrun{
-#' library(quickHapR)
 #' data("quickHap_test")
 #' vcfR::write.vcf(vcf, file = "test.vcf.gz")
 #' vcf <- import_vcf(file = "test.vcf.gz")
@@ -33,7 +32,6 @@ import_vcf <- function(vcf_file = vcf_file, ...) {
 #' and the latter part will be set as foot of the fig.
 #' @examples
 #' \dontrun{
-#' library(quickHapR)
 #' data("quickHap_test")
 #' write.table(pheno, file = "test.pheno.txt", quote = FALSE, sep = "\t")
 #' pheno <- import_pheno("test.pheno.txt")
@@ -60,7 +58,6 @@ import_pheno <- function(phenoFile, comment.char = "#", ...){
 #' @usage import_gff(gffFile, format = "GFF")
 #' @examples
 #' \dontrun{
-#'     library(quickHapR)
 #'     gff <- import_gff("your.gff", format = "GFF")
 #' }
 #' @importFrom rtracklayer import

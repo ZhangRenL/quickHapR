@@ -74,12 +74,15 @@ library(quickHapR)
 data("quickHap_test")
 hap <- get_hap(vcf,hyb_remove = TRUE, na.drop = TRUE)
 hapVsPheno(hap = hap,pheno = pheno,phenoName = "GrainWeight.2021",minAcc = 3)
-results <- hapVsPheno(hap = hap,
+hapResult <- hap_result(hap)
+plotHapTable(hapResult)
+plotHapTable(hapResult)
+phenoResult <- hapVsPheno(hap = hap,
                       pheno = pheno,
                       phenoName = "GrainWeight.2021",
                       minAcc = 3,
                       mergeFigs = TRUE)
-plot(results$figs)
+plot(phenoResult$figs)
 ```
 
 ### 4.2 软件使用
@@ -131,7 +134,7 @@ plotHapTable(hapResult,               # 单倍型结果
              title.color = "grey90")  # 表头底色
 
 # 单倍型与表型的关联分析
-res = hapVsPheno(hap,        # data.frame:第一列与最后一列分别固定为HAP和Accession，中间列为位置及对应的基因型
+phenoResult = hapVsPheno(hap,        # data.frame:第一列与最后一列分别固定为HAP和Accession，中间列为位置及对应的基因型
                  phenos,      # data.frame: 第一列固定为Accession，随后各列为表型数据，phenoName作为colnames
                  phenoName = "yourPhenoName", # 本次分析中使用的表型名称
                  hapPrefix = "H",             # 单倍型编号的前缀
@@ -139,8 +142,8 @@ res = hapVsPheno(hap,        # data.frame:第一列与最后一列分别固定�
                  mergeFigs = TRUE,    # 是否将两图融合
                  minAcc = 5)          # 需要分析的单倍型包含的数据量最小值
                  
-# plot(res$fig_pvalue)
-# plot(res$fig_Violin)
+# plot(phenoResult$fig_pvalue)
+# plot(phenoResult$fig_Violin)
 
-plot(res$figs)
+plot(phenoResult$figs)
 ```
