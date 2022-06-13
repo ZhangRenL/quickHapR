@@ -24,6 +24,7 @@ print.haptypes <- function(x){
         cat("\n ",stringi::stri_pad_right(nn, 11)," ", sep = "")
         cat(options[i])
     }
+    tibble::as_tibble(x)
 }
 
 
@@ -59,6 +60,7 @@ print.hapSummary <- function(x){
         cat("\n ",names(options)[i],":\t", sep = "")
         cat(options[i])
     }
+    tibble::as_tibble(x)
 }
 
 
