@@ -11,8 +11,9 @@ lastUpdate:   2022.05.27
 
 ## 1. 介绍
 
-**quickHapr had renamed as [geneHapR](https://gitee.com/zhangrenl/genehapr) since 2022.6.10**
-**For new functions please use [geneHapR](https://gitee.com/zhangrenl/genehapr) instead.**
+# **quickHapr had renamed as [geneHapR](https://gitee.com/zhangrenl/genehapr) since 2022.6.10**
+
+# **For new functions please use [geneHapR](https://gitee.com/zhangrenl/genehapr) instead.**
 
 
 **通过vcf文件对基因进行单倍型分析**
